@@ -1,0 +1,13 @@
+;- This file can be used to override setting from applicaiton.ini
+;- and still be ignored by git, svn etc...
+;-
+;- copy this file to local.ini add local.ini to your ignored files
+;- then put your passwords in this file to keep them out of git.
+
+[production]
+
+[staging : production]
+
+[testing : production]
+
+[development : production]
