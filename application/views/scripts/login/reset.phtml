@@ -1,0 +1,35 @@
+<div style="witdh:100%; height:100%;background-color:#f2f2f2;">
+<form  enctype="application/x-www-form-urlencoded" action="" method="post" >
+
+    <?php if ($this->message!='') {?>
+    <div id="view-message" style="padding:5px; width:268px;position:absolute;top: 15%;left: 50%;margin-top: -50px;margin-left: -140px;border:1px solid;border-color:red;background-color:white;word-wrap:break-word;overflow:auto;">
+    <?php echo $this->message; ?>
+    </div>
+    <?php } ?>
+    
+	<div id="view-content" style="position:absolute;top: 35%;left: 50%;margin-top: -50px;margin-left: -140px;">
+		<table style="width:280px;height:100px;border:1px solid;background-color:white;">
+		    <?php if (!$this->have_pad) { ?>
+		    <tr>
+				<td style="white-space: nowrap;">Current Password:</td><td><?php echo $this->formPassword("old_passwd",$this->email,array('style'=>'width:150px')); ?></td>
+			</tr>
+			<?php } ?>
+			<tr>
+				<td style="white-space: nowrap;">New Password:</td><td><?php echo $this->formPassword("new_passwd",$this->email,array('style'=>'width:150px')); ?></td>
+			</tr>
+			<tr>
+				<td style="white-space: nowrap;">Verify Password:</td><td><?php echo $this->formPassword("ver_passwd",$this->password,array('style'=>'width:150px')); ?></td>
+			</tr>
+			<tr>
+				<td><?php echo $this->formSubmit("reset","Reset Password"); ?>  </td><td style="text-align: right;"><?php echo $this->formSubmit("cancel","Cancel"); ?></td>
+		    </tr>
+		</table>
+	</div>
+	
+</form>
+</div>
+<script>
+window.onload = function() {
+	  document.getElementById("old_passwd").focus();
+	};
+</script>

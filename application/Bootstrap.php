@@ -6,6 +6,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	protected $config 			= null; // $this->config->(Option) = applicaiton.ini config option
 	protected $db 				= null; // Application DB
 	protected $log 				= null; // Logging object
+	protected $app 				= null; // Applicaiton specific configuration from shared db.
+	
+	// local only properties
+	protected $Signed_in 		= false; // No user signed in by default
+	
 	
 	/***********************************************************************
 	 * Force SSL for our production enviornment.
@@ -49,7 +54,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	
 		// set our shared database connection used by the
 		// models in the /application/models/Shared directory.
-		Zend_Registry::set('shared', $resource->getDb('shared'));
+		Zend_Registry::set('shared_db', $resource->getDb('shared'));
 	
 		// Stup our default database connection
 		$this->bootstrap('db');
@@ -111,7 +116,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		Zend_Registry::set( 'log', $this->log );
 	
 		// Examples:
-		//Zend_Registry::get('log')->debug("this is a debug log test");	// least severe only shows up on FireBug
+		//Zend_Registry::get('log')->debug("this is a debug log test");	// least severe only shown on FireBug console
 		//Zend_Registry::get('log')->info("this is a info log test");
 		//Zend_Registry::get('log')->notice("this is a notice log test");
 		//Zend_Registry::get('log')->warn("this is a warn log test");
@@ -120,5 +125,115 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		//Zend_Registry::get('log')->alert("this is a alert log test");
 		//Zend_Registry::get('log')->emerg("this is a emerg log test");	// Most severe 
 	}
+	
+	/***********************************************************************
+	 * Load applicaiton specific infromation from the shared databases.
+	 * 
+	 * This is where we will override any applicaiton.ini configuration with
+	 * database driven configuration data.
+	 **********************************************************************/
+	protected function _initApp()
+	{
+		$application_model = new Application_Model_Shared_Application();
+		$this->app = $application_model->find($this->config->application_id)->current();
+		Zend_Registry::set('app', $this->app);
+	}
+	
+	/***********************************************************************
+	 * Load the ACL from the appliation.ini file.
+	 * 
+	 * Format in applicaiton.ini is:
+	 * roles = (base role), (parent role):(child role), ..., administrator
+	 * 
+	 * Example:
+	 * roles = view, user:view, admin:user, administrator
+	 * 
+	 * view - The most basic role.
+	 * user - Can do anything view can + anything user can.
+	 * admin - Can do anytiing view + user + admin can.
+	 * administrator - Specal role that can do anything.
+	 **********************************************************************/
+	protected function _initACL() {
+		//return;
+		$this->acl = new Zend_Acl();
+	
+		$acls = explode(',',$this->config->roles);
+		foreach($acls as $acl_pair) {
+			$acl = explode(':', $acl_pair);
+	
+			if (isset($acl[1])) {
+				$this->acl->addRole(new Zend_Acl_Role(trim($acl[0])),trim($acl[1]));
+			}
+			else {
+				$this->acl->addRole(new Zend_Acl_Role(trim($acl[0])));
+			}
+	
+			// our prvilages match our roles.
+			if (trim($acl[0])!='administrator')
+				$this->acl->allow(trim($acl[0]), null, trim($acl[0]));
+			else
+				$this->acl->allow(trim($acl[0])); // Special role administrator can do anything!!!!
+		}
+	
+		Zend_Registry::set('acl', $this->acl);
+	}
+	
+	
+	protected function _initUser() {
+
+		// User table
+		$user_model = new Application_Model_Shared_User();
+	
+		// By default the User is not logged in
+		$UserRow=false;
+	
+		// See if the user is logged in via cookies
+		if (isset($_COOKIE['cavuser']) && isset($_COOKIE['cavpad']))
+			$UserRow = $user_model->getUserByNameAndPad($_COOKIE['cavuser'],$_COOKIE['cavpad']);
+	
+		// See if the user is logged in via HTTP BASIC Auth, used mostly for Webservices
+		if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_PW']) {
+			$UserRow = $user_model->getUserByNameAndPassword($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW']);
+			if (!$UserRow)    // If we have HTTP BASIC Auth but could not sign in with a password try the pad
+				$UserRow = $user_model->getUserByNameAndPad($_SERVER['PHP_AUTH_USER'],$_SERVER['PHP_AUTH_PW']);
+		}
+	
+		if ($UserRow) {
+			if ($UserRow->deleted==0) {
+				$this->user = $UserRow->toArray();
+				$this->user['password']='';    // Obscure the passwords from the data set.
+				$this->user['onetimepad']='';  // Obscure the pad from the data set.
+				$this->user['salt']='';        // Obscure the salt from the data set
+	
+				$this->Signed_in=true;
+	
+				// Set the user_id in the logger
+				$this->log->setEventItem('user_id', $this->user['user_id']);
+	
+				Zend_Registry::set('user', $this->user);
+				
+				return;
+			}
+		}
+		 
+		// We have not logged in the user so redirect the user to the login page.
+		Zend_Registry::set('user', null);
+	
+		// If we have a login server use it to login else use our current server
+		if (isset($this->config->login_server)) 
+			$LoginURL = "//".$this->config->login_server."/login";
+		else 
+			$LoginURL = "/login";
+		
+		// These are ok urls if we are not logged in.
+		$login_urls=array('/login','/login/reset','/login/request','/login/forgot');
+		if (in_array($_SERVER['REDIRECT_URL'],$login_urls))
+			return;
+	
+		// We were not authenticated and not on a login url so redirect to our login server.
+		header( "Location: ".$LoginURL."?ret=".$this->current_url);
+		exit();
+	}
+	
 }
 

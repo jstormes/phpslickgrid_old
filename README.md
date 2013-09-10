@@ -24,10 +24,16 @@ more debugging and will not force SSL connections.  It will also enable
 FirePHP debugging (http://www.firephp.org/HQ/Use.html) and SQL FirePHP 
 profiling.
 
-To setup the databases you will need to run the sql scripts in the /setup directory.
+To setup the databases you will need to run the sql scripts in the 
+/setup directory.
 
 DATABASES:
 ----------
 p_slickgrid_dev.sql Ð Will setup the application database.
 P_shared_dev.sql Ð Will setup the shared database.
+
+After you setup the database replace the email address dummy@stormes.net 
+with your email address.  The default password will be "Password!8".  
+You can use this email and password to login.
+
 

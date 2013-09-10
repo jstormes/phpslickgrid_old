@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 4.0.4.2
+-- version 4.0.6
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 08, 2013 at 01:04 PM
+-- Generation Time: Sep 09, 2013 at 11:39 PM
 -- Server version: 5.5.32
 -- PHP Version: 5.3.27
 
@@ -19,8 +19,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `p_slickgrid_dev`
 --
-CREATE DATABASE IF NOT EXISTS `p_slickgrid_dev` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-USE `p_slickgrid_dev`;
 
 -- --------------------------------------------------------
 
@@ -37,4 +35,8 @@ CREATE TABLE IF NOT EXISTS `log` (
   `user_id` int(11) DEFAULT NULL,
   `request_uri` varchar(1024) NOT NULL,
   PRIMARY KEY (`log_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

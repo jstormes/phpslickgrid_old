@@ -1,0 +1,22 @@
+<html>
+<body>
+Dear <?php echo $this->admin_name; ?><br />
+
+<p>User <?php echo $this->UserRow->user_full_nm; ?> tried to reset 
+his/her password for the deleted account <?php echo $this->UserRow->user_nm; ?> 
+from IP address <?php echo $this->ip_address; ?></p>
+
+<p>User Record:</p>
+
+<table>
+	<tr>
+	<?php foreach(array_keys($this->UserRow->toArray()) as $column) {
+        echo '<td>'.$column.'</td><td>'.$this->UserRow->$column.'</td></tr><tr>';
+    }?>
+	</tr>
+</table>
+
+<p>This could be an attempt by a deleted user to access the system without permission.</p>
+<p>If you continue to receive this email for this user, you should investigate</p> 
+</body>
+</html>

@@ -1,0 +1,20 @@
+<?php /*********************************************************************
+If you edit this file don't forget to edit the file forgot_html to match!!!!
+*************************************************************************/?>
+Dear <?php echo $this->UserRow->user_full_nm; ?>,
+
+A password reset has been requested for your email address <?php echo $this->UserRow->user_nm; ?>.
+
+If you did not request this password reset, please reply to this email, and let us know.
+
+If you wish to reset your password, copy the following link into your browser:
+
+<?php echo $this->reset_link; ?>
+
+Regards,
+
+<?php echo $this->admin_name; ?>
+
+<?php echo $this->admin_email; ?>
+
+<?php echo $this->admin_number; ?>
