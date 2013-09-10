@@ -16,18 +16,17 @@ class LoginController extends Zend_Controller_Action
     	$this->config     = Zend_Registry::get('config');
     	$this->user       = Zend_Registry::get('user');
 
-    	$this->log        = Zend_Registry::get('log');
-    	
-    	// this controller uses classic php sessions
-    	@session_start();
-    	
+    	$this->log        = Zend_Registry::get('log');    	
     }
     
     /**
-     Validate an email address.
-     Provide email address (raw input)
-     Returns true if the email address has the email
-     address format and the domain exists.
+     * Validate an email address.
+     * Provide email address (raw input)
+     * Returns true if the email address has the email
+     * address format and the domain exists.
+     * 
+     * @param unknown_type $email
+     * @return boolean
      */
     private function validEmail($email)
     {
@@ -95,6 +94,11 @@ class LoginController extends Zend_Controller_Action
         return $isValid;
     }
     
+    /**
+     * Generate a unique ID string.
+     * 
+     * @return string
+     */
     private function uuid()
     {
         return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
@@ -104,7 +108,15 @@ class LoginController extends Zend_Controller_Action
                 mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ) );
     }
     
-    
+    /**
+     * Check that a pssword meets our requirments
+     * 
+     * @param string $password
+     * @return number
+     */
+    private function passwordCheck($password) {    
+    	return (preg_match("/^(?=.*\\d)(?=.*[~!@#$%^&()_+-={}|:;<>?,.])(?=.*[a-z])(?=.*[A-Z]).{8,20}$/", $password));    
+    }
     
 	public function forgotAction() {
 		$this->view->headTitle('Email Password Reset');
@@ -120,12 +132,12 @@ class LoginController extends Zend_Controller_Action
 				$message->setScriptPath( APPLICATION_PATH . '/views/scripts/login/emails/' );
 				
 				// assign values
-				$message->assign( 'ip_address',       $_SERVER['REMOTE_ADDR'] );
-				$message->assign( 'application_name', $this->config->application_name );
-				$message->assign( 'admin_email',      $this->config->admin_email );
-				$message->assign( 'admin_name',       $this->config->admin_name );
-				$message->assign( 'admin_number',     $this->config->admin_number );
-				$message->assign( 'email',            $this->view->email );
+				$message->ip_address       = $_SERVER['REMOTE_ADDR'];
+				$message->application_name = $this->config->application_name;
+				$message->admin_email      = $this->config->admin_email;
+				$message->admin_name       = $this->config->admin_name;
+				$message->admin_number     = $this->config->admin_number;
+				$message->email            = $this->view->email;
 				
 				// create mail object
 				$mail = new Zend_Mail ( 'utf-8' );
@@ -286,58 +298,20 @@ class LoginController extends Zend_Controller_Action
                
     }
     
-    public function redirect_msg($msg) {
-        // if we are here we don't have a good password reset context so redirect to login.
-        $_SESSION['msg']=$msg;
+    
 
-        $split_hostname=explode(".", $_SERVER['SERVER_NAME']);
-        if ($this->config->federated==true)
-            $domain="http://".$this->config->authenticationsubdomain.".".$split_hostname[count($split_hostname)-2].".".$split_hostname[count($split_hostname)-1]."/login";
-        else
-            $domain="http://".$split_hostname[count($split_hostname)-3].".".$split_hostname[count($split_hostname)-2].".".$split_hostname[count($split_hostname)-1]."/login";
-        //$return = urlencode($_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"]);
-        header( "Location: $domain" );
-        exit();
-    }
-    
-    private function passwordCheck($password) {
-        
-        return (preg_match("/^(?=.*\\d)(?=.*[~!@#$%^&()_+-={}|:;<>?,.])(?=.*[a-z])(?=.*[A-Z]).{8,20}$/", $password));
-        
-    }
-    
-    
-    
+       
     public function resetAction() {
         
         $UserTable = new Application_Model_Shared_User();
         
-        $this->view->headTitle('Password Reset');
-        $this->view->enable_navigation=false;     
-
-        if (isset($_SESSION['msg'])) {
-            $this->view->message=$_SESSION['msg']."<br /><br />";
-            unset($_SESSION['msg']);
-        }
-        else {
-         $this->view->message.="Your password must contain at least 8 characters, including at least one of each of the following types of characters:  Uppercase letter(s), Special characters (~!@#$%^&()_+-={}|:;<>?,.), Numbers.";
-        }
-        // if cancel then redirect back to once we came.
-        if ($this->getRequest()->isPost()) {
-            if (isset($_POST['cancel'])) {
-                // Redirect to home page
-                if (isset($_POST['ret']))
-                {
-                    $this->_redirect("http://".$_POST['ret']);
-                }
-                else
-                {
-                    $this->_redirect("/");
-                }
-                exit();
-            }
-        }
+        $this->view->ret=$this->getRequest ()->getPost ( 'ret', '/' );
         
+        $this->view->headTitle('Password Reset');
+// May or may not        $this->view->enable_navigation=false;     
+
+         $this->view->message.="Your password must contain at least 8 characters, including at least one of each of the following types of characters:  Uppercase letter(s), Special characters (~!@#$%^&()_+-={}|:;<>?,.), Numbers.";
+
         // if we are not logged in but have a valid PAD then we are respoing to a password change from an email.
         if (isset($_GET['pad'])) {
             
@@ -359,7 +333,9 @@ class LoginController extends Zend_Controller_Action
                                 $UserRow->salt=$this->uuid();
                                 $UserRow->password=md5($_POST['new_passwd'].$UserRow->salt);
                                 $UserRow->save();
-                                $this->redirect_msg("Your password has been changed.  You may login below.");
+                                //$this->redirect_msg("Your password has been changed.  You may login below.");
+                                $this->view->js  = "alert('Your password has been changed.');\n";
+                                $this->view->js .= "window.location = '".$this->view->ret."';";
                             }
                             else {
                                 $this->view->message="Your password must contain at least 8 characters, including at least one of each of the following types of characters:  Uppercase letter(s), Special characters (~!@#$%^&()_+-={}|:;<>?,.), Numbers.";
@@ -376,7 +352,7 @@ class LoginController extends Zend_Controller_Action
             if ($this->user!=null) {
                 if ($this->getRequest()->isPost()) {
                     if ($_POST['new_passwd']!==$_POST['ver_passwd']) {
-                        $this->view->message="Password don't match please try again.";
+                        $this->view->message="New passwords did match please try again.";
                         return;
                     }
                     
@@ -391,10 +367,11 @@ class LoginController extends Zend_Controller_Action
                             $UserRow->salt=$this->uuid();
                             $UserRow->password=md5($_POST['new_passwd'].$UserRow->salt);
                             $UserRow->save();
-                            $this->redirect_msg("Your password has been changed.  You may login below.");
+                            $this->view->js  = "alert('Your password has been changed.');\n";
+                            $this->view->js .= "window.location = '".$this->view->ret."';";
                         }
                         else {
-                            $this->view->message="New Password must be at least 6 characters with one upper case, one lower case and one number.";
+                            $this->view->message="New Password must be at least 8 characters with one upper case, one lower case and one number.";
                         }
                     } 
                     else {
@@ -406,7 +383,8 @@ class LoginController extends Zend_Controller_Action
             }
             $this->view->message="Unknown error please try again.";
         }
-        $this->redirect_msg("This password reset request has ben used or has expired.  You may request another password reset below."); 
+        $this->view->js  = "alert('This password reset request has ben used or has expired.');\n";
+        $this->view->js .= "window.location = '".$this->view->ret."';";
     }
     
     public function requestAction() {

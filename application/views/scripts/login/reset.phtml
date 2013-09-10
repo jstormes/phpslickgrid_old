@@ -21,7 +21,10 @@
 				<td style="white-space: nowrap;">Verify Password:</td><td><?php echo $this->formPassword("ver_passwd",$this->password,array('style'=>'width:150px')); ?></td>
 			</tr>
 			<tr>
-				<td><?php echo $this->formSubmit("reset","Reset Password"); ?>  </td><td style="text-align: right;"><?php echo $this->formSubmit("cancel","Cancel"); ?></td>
+				<td><?php echo $this->formSubmit("reset","Reset Password"); ?>  </td>
+				<td style="text-align: right;">
+					<?php echo $this->formButton("cancel","Cancel", array('onclick'=>'window.location = "'.$this->ret.'";')); ?>
+				</td>
 		    </tr>
 		</table>
 	</div>
@@ -29,7 +32,11 @@
 </form>
 </div>
 <script>
-window.onload = function() {
-	  document.getElementById("old_passwd").focus();
+	window.onload = function() {
+	  //document.getElementById("old_passwd").focus();
+	  document.forms[0].elements[0].focus();
 	};
+
+	<?php echo $this->js; ?>
+	
 </script>
