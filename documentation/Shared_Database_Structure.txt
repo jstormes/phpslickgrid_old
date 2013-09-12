@@ -1,0 +1,60 @@
+
+
+The ÒsharedÓ database is common to all applications.  The purpose of the 
+shared database is to hold data (settings) common across all the 
+applications.  An example of common data is the list of users and passwords, 
+the list of applications, the list of roles and the list of what
+users have what roles in what applications.  
+
+The structure of this example in the shared database:
+
+    user:
+    -------------------------------------------------------------------------------------
+ +->| user_id     | user_nm    | password         | salt   | pad              | deleted |
+ |  -------------------------------------------------------------------------------------
+ |  | Primary Key | user email | MD5(password_txt | Random | Key for cookies  | user    |
+ |  |             | address    | +salt)           | string | & password reset | deleted |
+ |  -------------------------------------------------------------------------------------
+ |
+ |     app:
+ |     -------------------------------------------------------------
+ |  +->| app_id           | app_nm      | app_sub_domain | deleted |
+ |  |  -------------------------------------------------------------
+ |  |  | Primary Key Must | Application | Sub-Domain for | Record  |
+ |  |  | Must match       | Name        | building URL   | Deleted |
+ |  |  | app_id in *.ini  |             |                |         |
+ |  |  -------------------------------------------------------------   
+ |  |      ^                                                    
+ |  |      |
+ |  |      +----------------------------+
+ |  |                                   |
+ |  |     role:                         |
+ |  |     ----------------------------------------------------------------
+ |  |  +->| role_id     | parent_id | app_id      | role_nm              |
+ |  |  |  ----------------------------------------------------------------
+ |  |  |  | Primary Key | Parent to | app ID from | role name must match |
+ |  |  |  |             | this role | app table   | roles in the *.ini   |
+ |  |  |  |             | or null   |             |                      |
+ |  |  |  ----------------------------------------------------------------
+ |  |  |        ^           |
+ |  |  |        |           |
+ |  |  |        +-----------+
+ |  |  |
+ |  |  +------------------------------------------------+
+ |  |                                                   |
+ |  +--------------------------------------+            |
+ |                                         |            |
+ +----------------------------+            |            |
+                              |            |            |
+     user_app_role:           |            |            |
+     ------------------------------------------------------------------
+     | user_app_role_id | user_id      | app_id      | role_id        |
+     ------------------------------------------------------------------
+     | Primary Key      | user id from | app ID from | role id from   |
+     |                  | user table   | app table   | the role table |
+     ------------------------------------------------------------------
+
+
+
+
+	 

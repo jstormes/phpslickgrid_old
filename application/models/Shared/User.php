@@ -26,11 +26,11 @@ class Application_Model_Shared_User extends Zend_Db_Table_Abstract
         return false;
     }
     
-    public function getUserByNameAndPad($user_nm,$onetimepad) {
+    public function getUserByNameAndPad($user_nm,$pad) {
     
         $sel = $this->select();
         $sel->where("user_nm = ? ",$user_nm);
-        $sel->where("onetimepad = ? ",$onetimepad);
+        $sel->where("pad = ? ",$pad);
         $UserRow=$this->fetchAll($sel)->current();
         if ($UserRow) {
             if ($UserRow->deleted==false){

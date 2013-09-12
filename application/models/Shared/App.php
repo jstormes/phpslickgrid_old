@@ -1,9 +1,9 @@
 <?php
 
-class Application_Model_Shared_Application extends Zend_Db_Table_Abstract
+class Application_Model_Shared_App extends Zend_Db_Table_Abstract
 {
 
-    protected $_name = 'application';
+    protected $_name = 'app';
     protected $_db = null;
     
     

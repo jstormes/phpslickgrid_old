@@ -7,10 +7,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	protected $db 				= null; // Application DB
 	protected $log 				= null; // Logging object
 	protected $app 				= null; // Applicaiton specific configuration from shared db.
-	
+	protected $user 			= null; // The user row from the user table in the shared db.
+
 	// local only properties
 	protected $Signed_in 		= false; // No user signed in by default
 	
+	protected $AuthServer 		= ''; // Authencation server, logins are redirected to this server.
+	protected $LogInOutURL 		= ''; // URL to login/logout of the applicaitons.
+	protected $ProfileURL       = ''; // URL for the user to modify their profile.
 	
 	/***********************************************************************
 	 * Force SSL for our production enviornment.
@@ -35,7 +39,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	 **********************************************************************/
 	protected function _initConfig()
 	{
-		$this->config = new Zend_Config($this->getOptions(), true);
+		$this->config = new Zend_Config($this->getOptions(), true);	
 		Zend_Registry::set('config', $this->config);
 	}
 	
@@ -131,11 +135,23 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	 * 
 	 * This is where we will override any applicaiton.ini configuration with
 	 * database driven configuration data.
+	 * 
+	 * Required Table Structure (Table may contain more columns, but must
+	 * contain these):
+	 *
+	 * app:
+     * -------------------------------------------------------------
+     * | app_id           | app_nm      | app_sub_domain | deleted |
+     * -------------------------------------------------------------
+     * | Primary Key Must | Application | Sub-Domain for | Record  |
+     * | Must match       | Name        | building URL   | Deleted |
+     * | app_id in *.ini  |             |                |         |
+     * -------------------------------------------------------------   
 	 **********************************************************************/
 	protected function _initApp()
 	{
-		$application_model = new Application_Model_Shared_Application();
-		$this->app = $application_model->find($this->config->application_id)->current();
+		$application_model = new Application_Model_Shared_App();
+		$this->app = $application_model->find($this->config->app_id)->current();
 		Zend_Registry::set('app', $this->app);
 	}
 	
@@ -178,7 +194,51 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		Zend_Registry::set('acl', $this->acl);
 	}
 	
+	/***********************************************************************
+	 * Setup our login/logout URL and profile URL.  Allow for some other 
+	 * server on the same domain to provide login services for multiple 
+	 * applicaitons.  This server could also use OAuth, Active Directory, 
+	 * etc...
+	 * 
+	 * As long as the proper cookies are setup to match the shared user table
+	 * the user will be "logged on".
+	 ***********************************************************************/
+	protected function _initAuthServer() {
+		// If we have a login server use it to login else use our current server
+		if (isset($this->config->login_server))
+			$this->AuthServer = $this->config->login_server;
+		else
+			$this->AuthServer = $_SERVER["HTTP_HOST"];
+		
+		$this->LogInOutURL = "//".$this->AuthServer."/login";
+		$this->ProfileURL  = "//".$this->AuthServer."/reset"; // for now we just reset password.
+	}
 	
+	/***********************************************************************
+	 * Make sure the user is logged in, and setup the user "object" for use 
+	 * by the reset of the application.  This is who the user "is".  We have 
+	 * three type of user logins.
+	 * 
+	 * The first login type is command line where we use a command line user from
+	 * the config.  The second type is a cookied user, where the user has a 
+	 * valid set of cookies that match the user table from the shared 
+	 * database.  The final type of login in a HTTP BASIC Auth, used for 
+	 * webservices.
+	 * 
+	 * NOTE: This security is not hardded or tested.  Needs more research
+	 * and though.
+	 * 
+	 * Required Table Structure (Table may contain more columns, but must
+	 * contain these):
+	 * 
+	 * user:
+	 * -------------------------------------------------------------------------------------
+	 * | user_id     | user_nm    | password         | salt   | onetimepad       | deleted |
+	 * -------------------------------------------------------------------------------------
+	 * | Primary Key | user email | MD5(password_txt | Random | Key for cookies  | user    |
+	 * |             | address    | +salt)           | string | & password reset | deleted |
+	 * -------------------------------------------------------------------------------------
+	 **********************************************************************/
 	protected function _initUser() {
 
 		// User table
@@ -186,6 +246,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	
 		// By default the User is not logged in
 		$UserRow=false;
+		
+		// If we are command line attempt to use the command line user from 
+		// the config file.
+		if (PHP_SAPI == 'cli') {
+			if (isset($config->command_line_user))
+				$UserRow = $user_model->find($config->command_line_user)->current();
+		}
 	
 		// See if the user is logged in via cookies
 		if (isset($_COOKIE['cavuser']) && isset($_COOKIE['cavpad']))
@@ -217,22 +284,79 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		}
 		 
 		// We have not logged in the user so redirect the user to the login page.
+		$this->user=null;
 		Zend_Registry::set('user', null);
-	
-		// If we have a login server use it to login else use our current server
-		if (isset($this->config->login_server)) 
-			$LoginURL = "//".$this->config->login_server."/login";
-		else 
-			$LoginURL = "/login";
-		
+			
 		// These are ok urls if we are not logged in.
 		$login_urls=array('/login','/login/reset','/login/request','/login/forgot');
-		if (in_array($_SERVER['REDIRECT_URL'],$login_urls))
-			return;
+		if (isset($_SERVER['REDIRECT_URL']))
+			if (in_array($_SERVER['REDIRECT_URL'],$login_urls))
+				return; // we on on an allowed url,
+						// so return before we redirect to the lgoin server.
 	
+		// Get our current_url
+		$current_url=urlencode($_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"]);
+		
 		// We were not authenticated and not on a login url so redirect to our login server.
-		header( "Location: ".$LoginURL."?ret=".$this->current_url);
+		header( "Location: ".$this->LogInOutURL."?ret=".$current_url);
 		exit();
+	}
+	
+	/***********************************************************************
+	 * Get the current user role, if there is no current uesr role will be 
+	 * null.  This is what the user can do in the applcation.
+	 * 
+	 * The role for the current user for the current application is mapped 
+	 * in the user_app_role mapping table in the shared database.  
+	 * 
+	 * If the user has no mapping in this table the user does not have 
+	 * access to this applicaiton.  Said another way, user access is
+	 * granted by the entry in the user_app_role table.
+	 * 
+	 * Required Table Structure (Table may contain more columns, but must
+	 * contain these):
+	 * 
+	 * user_app_role:
+	 * Has forigin key constrants with the user, app and role tables in the
+	 * shared database.
+	 * ------------------------------------------------------------------
+	 * | user_app_role_id | user_id      | app_id      | role_id        |
+	 * ------------------------------------------------------------------
+	 * | Primary Key      | user id from | app id from | role id from   |
+	 * |                  | user table   | app table   | the role table |
+	 * ------------------------------------------------------------------
+	 * 
+	 * role:
+	 * ----------------------------------------------------------------
+	 * | role_id     | parent_id | app_id      | role_nm              |
+	 * ----------------------------------------------------------------
+	 * | Primary Key | Parent to | app it from | role name must match |
+	 * |             | this role | app table   | roles in the config  |
+	 * |             | or null   |             |                      |
+	 * ----------------------------------------------------------------
+	 **********************************************************************/
+	protected function _initRole() {
+ 		if ($this->user!==null) {
+			$user_app_role_model = new Application_Model_Shared_UserAppRole();
+			$role_model = new Application_Model_Shared_Role();
+			$row=$user_app_role_model->fetchRow($user_app_role_model->select()
+					->where('user_id = ?',$this->user['user_id'])
+					->where('app_id = ?',$this->config->app_id));
+			if ($row) {
+				$role=$row->findDependentRowset($role_model)->current()->role_nm;
+				if ($role) {
+					Zend_Registry::set('role_nm', $this->role);	// Store the role name, for this user, for this app.
+					return;
+				}
+			}
+			// If we are here we have no role name (role_nm).
+			$this->log->alert("User ".$this->user['user_nm']." user_id ".$this->user['user_nm'].
+					" has no role for application ".$this->app->app_nm." app_id ".$this->app->app_id);
+			throw new Exception("This user id has no role for this applicaiton.");
+			exit;
+ 		}
+ 		
+
 	}
 	
 }

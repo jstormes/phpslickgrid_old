@@ -153,10 +153,10 @@ class LoginController extends Zend_Controller_Action
 						// ****** Active User was found in our user database. ******
 						
 						// Reset the PAD
-						$UserRow->onetimepad=$this->uuid();
+						$UserRow->pad=$this->uuid();
 						$UserRow->save();
 						
-						$message->assign( 'reset_link', $_SERVER['SERVER_NAME']."/login/reset?pad=".$UserRow->onetimepad );
+						$message->assign( 'reset_link', $_SERVER['SERVER_NAME']."/login/reset?pad=".$UserRow->pad );
 						
 						// configure email envelope and body
 						$mail->addTo ( $this->view->email );
@@ -234,8 +234,8 @@ class LoginController extends Zend_Controller_Action
         }
         
         if ($this->getRequest()->isPost()) {
-            $this->view->email=$_POST['email'];
-            $this->view->password=$_POST['password'];
+            $this->view->email = $this->getRequest()->getPost( 'email', '' );
+            $this->view->password = $this->getRequest()->getPost( 'password', '' );
 
             if($this->validEmail($this->view->email)){
                                 
@@ -249,7 +249,7 @@ class LoginController extends Zend_Controller_Action
                     $UserRow=$UserTable->fetchAll($sel)->current();
                     if ($UserRow) {
                         if (empty($UserRow->salt)) {
-                            $reset_link = "/login/reset?pad=".$UserRow->onetimepad;
+                            $reset_link = "/login/reset?pad=".$UserRow->pad;
                             $_SESSION['msg']='You password has expired. Please enter a new password below and press "Reset Password". Note: your password must contain at least 8 characters, including at least one of each of the following types of characters:  Uppercase letter(s), Special characters (~!@#$%^&()_+-={}|:;<>?,.), Numbers.';
                             $this->_redirect($reset_link);
                         }
@@ -258,8 +258,8 @@ class LoginController extends Zend_Controller_Action
                             if ($UserRow->password==md5($this->view->password.$UserRow->salt)) {
                                 // ************ User is valid ************
                                 
-                                if ($UserRow->onetimepad==null) {
-                                    $UserRow->onetimepad = $this->uuid();
+                                if ($UserRow->pad==null) {
+                                    $UserRow->pad = $this->uuid();
                                     $UserRow->save();
                                 }   
                                 
@@ -267,7 +267,7 @@ class LoginController extends Zend_Controller_Action
                                 setcookie("cavuser",$this->view->email, 0, "/", $this->domain);
                                  
                                 // Set common one time pad.
-                                setcookie("cavpad",$UserRow->onetimepad , 0, "/", $this->domain);
+                                setcookie("cavpad",$UserRow->pad , 0, "/", $this->domain);
                                  
                                 
                                 // Redirect to home page
@@ -316,7 +316,7 @@ class LoginController extends Zend_Controller_Action
         if (isset($_GET['pad'])) {
             
             $sel = $UserTable->select();
-            $sel->where("onetimepad = ? ",$_GET['pad']);
+            $sel->where("pad = ? ",$_GET['pad']);
             $UserRow=$UserTable->fetchAll($sel)->current();
             if ($UserRow) {
                 if ($UserRow->deleted==false){
@@ -329,7 +329,7 @@ class LoginController extends Zend_Controller_Action
                         }
                         else {
                             if ($this->passwordCheck($_POST['new_passwd'])){
-                                $UserRow->onetimepad=$this->uuid();
+                                $UserRow->pad=$this->uuid();
                                 $UserRow->salt=$this->uuid();
                                 $UserRow->password=md5($_POST['new_passwd'].$UserRow->salt);
                                 $UserRow->save();
@@ -357,13 +357,13 @@ class LoginController extends Zend_Controller_Action
                     }
                     
                     $sel = $UserTable->select();
-                    $sel->where("onetimepad = ? ",$_COOKIE['cavpad']);
+                    $sel->where("pad = ? ",$_COOKIE['cavpad']);
                     $sel->where("user_nm = ? ",$_COOKIE['cavuser']);
                     $UserRow = $UserTable->fetchAll($sel)->current();
                     if ($UserRow->password==md5($_POST['old_passwd'].$UserRow->salt)) {
                         if ($this->passwordCheck($_POST['new_passwd'])){
                             // We are good to chang the password
-                            $UserRow->onetimepad=$this->uuid();
+                            $UserRow->pad=$this->uuid();
                             $UserRow->salt=$this->uuid();
                             $UserRow->password=md5($_POST['new_passwd'].$UserRow->salt);
                             $UserRow->save();
@@ -426,7 +426,7 @@ class LoginController extends Zend_Controller_Action
  	                $split_hostname=explode(".", $_SERVER['SERVER_NAME']);
  	                $message->domain=$split_hostname[count($split_hostname)-2].".".$split_hostname[count($split_hostname)-1];
 
-// STUB:            $message->activate_link = $_SERVER['SERVER_NAME']."/admin/activate?pad=".$UserRow->onetimepad;
+// STUB:            $message->activate_link = $_SERVER['SERVER_NAME']."/admin/activate?pad=".$UserRow->pad;
  	                $message->ip_address = $_SERVER['REMOTE_ADDR'];
 	                
 	                
