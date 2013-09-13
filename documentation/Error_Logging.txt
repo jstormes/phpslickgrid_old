@@ -1,0 +1,50 @@
+
+
+The Bootstrap.php file initializes a logging object for use throughout
+the application.  When the environment is not ÒproductionÓ the log write 
+to two streams, the first being a database table called log in the 
+application database, the second being FirePHP.  When used in "production",
+the log is only written to the database and debugging messages are ignored.
+ 
+
+To use this log in your code you will need to get a handle of the log 
+object from the registry, or use the registry entry directly.
+
+From a controller you might create a reference to the log like so: 
+
+    public function init()
+    {
+        /* Initialize action controller here */
+    	   $this->log        = Zend_Registry::get('log');    	
+    }
+
+Then in your actions you can use any of the following:
+
+	$this->log->debug("this is a debug log test");	// least severe only shown on FireBug console
+	$this->log->info("this is a info log test");
+	$this->log->notice("this is a notice log test");
+	$this->log->warn("this is a warn log test");
+	$this->log->err("this is a err log test");
+	$this->log->crit("this is a crit log test");
+	$this->log->alert("this is a alert log test");
+	$this->log->emerg("this is a emerg log test");	// Most severe
+
+To use the log directly from the registry:
+
+	Zend_Registry::get('log')->debug("this is a debug log test");
+	Zend_Registry::get('log')->info("this is a info log test");
+	Zend_Registry::get('log')->notice("this is a notice log test");
+	Zend_Registry::get('log')->warn("this is a warn log test");
+	Zend_Registry::get('log')->err("this is a err log test");
+	Zend_Registry::get('log')->crit("this is a crit log test");
+	Zend_Registry::get('log')->alert("this is a alert log test");
+	Zend_Registry::get('log')->emerg("this is a emerg log test"); 
+
+log:
+--------------------------------------------------------------------------------------------
+| log_id  | message     | priority | timestamp  | priorityName | user_id     | request_uri |
+--------------------------------------------------------------------------------------------
+| Primary | Text string | Numeric  | Time error | String text  | user_id of  | URL of the  |
+| Key     | of error    | priority | occured    | of priority  | the user if | request if  |
+|         | message.    |          |            |              | available.  | available.  |
+--------------------------------------------------------------------------------------------

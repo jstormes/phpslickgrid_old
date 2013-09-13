@@ -93,6 +93,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	 * All logging more severe that "DEBUG" is sent to the log table of the
 	 * applicaiton database.  Firebug (FirePHP) is only enabled for 
 	 * non produciton enviornments. 
+	 * 
+	 * log:
+	 * --------------------------------------------------------------------------------------------
+	 * | log_id  | message     | priority | timestamp  | priorityName | user_id     | request_uri |
+	 * --------------------------------------------------------------------------------------------
+	 * | Primary | Text string | Numeric  | Time error | String text  | user_id of  | URL of the  |
+	 * | Key     | of error    | priority | occured    | of priority  | the user if | request if  |
+	 * |         | message.    |          |            |              | available.  | available.  |
+	 * --------------------------------------------------------------------------------------------
 	 **********************************************************************/
 	protected function _initLogger() {
 	
@@ -112,6 +121,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		$writer_db->addFilter($filter);	
 		 
 		// if we are not in produciton enable Firebug
+		// http://www.firephp.org/
 		if ( APPLICATION_ENV != 'production' ) {
 			$writer_firebug = new Zend_Log_Writer_Firebug();
 			$this->log->addWriter($writer_firebug);
@@ -121,6 +131,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	
 		// Examples:
 		//Zend_Registry::get('log')->debug("this is a debug log test");	// least severe only shown on FireBug console
+		//$this->log->debug("this is a debug log test");	// least severe only shown on FireBug console
 		//Zend_Registry::get('log')->info("this is a info log test");
 		//Zend_Registry::get('log')->notice("this is a notice log test");
 		//Zend_Registry::get('log')->warn("this is a warn log test");
@@ -211,7 +222,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			$this->AuthServer = $_SERVER["HTTP_HOST"];
 		
 		$this->LogInOutURL = "//".$this->AuthServer."/login";
-		$this->ProfileURL  = "//".$this->AuthServer."/reset"; // for now we just reset password.
+		$this->ProfileURL  = "//".$this->AuthServer."/login/reset"; // for now we just reset password.
 	}
 	
 	/***********************************************************************
@@ -343,8 +354,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 					->where('user_id = ?',$this->user['user_id'])
 					->where('app_id = ?',$this->config->app_id));
 			if ($row) {
-				$role=$row->findDependentRowset($role_model)->current()->role_nm;
-				if ($role) {
+				$this->role=$row->findDependentRowset($role_model)->current()->role_nm;
+				if ($this->role) {
 					Zend_Registry::set('role_nm', $this->role);	// Store the role name, for this user, for this app.
 					return;
 				}
@@ -355,9 +366,118 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			throw new Exception("This user id has no role for this applicaiton.");
 			exit;
  		}
- 		
-
 	}
+	
+	/***********************************************************************
+	 * Populate the layout.  See resources.layout.layoutPath in *.ini file.
+	 **********************************************************************/
+	protected function _initBuildLayout() {
+	
+		// Bind our css for the layout to the view
+		$this->bootstrap('layout');
+ 		$this->layout = $this->getResource('layout');
+ 		$this->view = $this->layout->getView();
+ 		
+ 		// Poplate the base css files
+ 		$this->view->headLink()->appendStylesheet('/css/layout/body.css');    // Bind screen CSS for our layout
+ 		$this->view->headLink()->appendStylesheet('/css/layout/body-print.css','print'); // Bind print CSS for our layout
+ 		$this->view->headLink()->appendStylesheet('/css/layout/header.css');    // Bind screen CSS for our header
+ 		$this->view->headLink()->appendStylesheet('/css/layout/header-print.css','print'); // Bind print CSS for our header
+ 		$this->view->headLink()->appendStylesheet('/css/layout/footer.css');    // Bind screen CSS for our header
+ 		$this->view->headLink()->appendStylesheet('/css/layout/footer-print.css','print'); // Bind print CSS for our header
+ 		 	
+ 		// User info to the view
+ 		$this->view->user = $this->user;
+ 		
+ 		// http://fortawesome.github.io/Font-Awesome/
+ 		$this->view->headLink()->appendStylesheet('//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css','screen, print'); // Bind CSS for Font-Awsome
+	
+ 		// set the default title from the config
+ 		$this->view->title = $this->config->application_name;    
+	
+ 		// Watermark to show envirment, helpfull so you don't accidently update production.
+ 		$this->view->watermark="";
+ 		// If watermark is enabled in the config put a background image in the header
+ 		if ($this->config->watermark==1)
+ 			$this->view->watermark="style=\"background-image:url('/images/layout/".APPLICATION_ENV.".png');background-repeat:repeat-x;\"";
+	
+ 		// Links for the user toolbar.
+ 		$this->log->debug($this->ProfileURL);
+ 		$this->view->LogInOutURL=$this->LogInOutURL;
+ 		$this->view->ProfileURL=$this->ProfileURL;
+ 		
+ 		// Links for the footer.
+ 		$this->view->copyright_company = $this->config->copyright_company;
+ 		$this->view->copyright_link = $this->config->copyright_link;
+	}
+	
+	/***********************************************************************
+	 * Build the Application menu.
+	 *********************************************************************/
+	protected function _initAppMenu() {
+		if ($this->user) {
+			$user_app_role_model = new Application_Model_Shared_UserAppRole();
+			$app_model = new Application_Model_Shared_App();
+			
+			// Get All Applications this user has access to
+			$row=$user_app_role_model->fetchRow($user_app_role_model->select()
+					->where('user_id = ?',$this->user['user_id']));
+			if ($row) {
+				$apps=$row->findDependentRowset($app_model);
+			}
+			
+			// Bind application menu to the view
+			$this->view->headLink()->appendStylesheet('/css/layout/app-menu.css');    // Bind screen CSS for our layout
+			$this->view->headLink()->appendStylesheet('/css/layout/app-menu-print.css','print');    // Bind screen CSS for our layout
+ 			$this->view->appMenu = array();
+ 			$split_hostname=explode(".", $_SERVER['SERVER_NAME']);
+ 			foreach($apps as $key=>$app) {
+ 				$this->view->appMenu[$key]['label']=$app['app_nm'];
+ 				// Build out uri
+ 				$this->view->appMenu[$key]['uri']="http://".$app['app_sub_domain'].".".$split_hostname[count($split_hostname)-2].".".$split_hostname[count($split_hostname)-1];
+ 			}
+		}
+	}
+	
+	/***********************************************************************
+	 * Build the menu.
+	 **********************************************************************/
+	protected function _initNavigation() {
+		if ($this->user) {
+			 
+			// Add menu as a resource to the acl
+			$this->acl->add(new Zend_Acl_Resource('menu'));
+	
+			// Bind css for our navivation
+			$this->view->headLink()->appendStylesheet('/css/layout/menu.css');
+			$this->view->headLink()->appendStylesheet('/css/layout/menu-print.css','print');
+	
+			// Bind our menu into the view
+			$this->menu = new Zend_Navigation($this->config->menu);
+			//Zend_Registry::set('navigation', $this->menu);
+			//Zend_Registry::set('Zend_Navigation', $this->menu);
+	
+			// Load our role into the menue
+			$this->view->navigation($this->menu)->setAcl($this->acl)->setRole(trim($this->role));
+	
+			// Looks for any navigation pages requiring project_id information and injects
+			// the id into the element or removes the element if we have no project_id.
+			$pages = $this->menu->findAllBy('params_id', 'PROJECT_ID');
+			foreach($pages as &$page){
+				if ($this->project_id!=0) {
+					if (method_exists($page, 'getParams')) {
+						$params = $page->getParams();
+						$params['project_id']=$this->project_id;
+						$page->setParams($params);
+					}
+				}
+				else {
+					$this->menu->removePage($page);
+				}
+			}
+		}
+	}
+	
 	
 }
 

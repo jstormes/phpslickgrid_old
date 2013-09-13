@@ -1,0 +1,71 @@
+@CHARSET "UTF-8";
+
+/* Layout for all pages the use the header and menu logic.
+    This is the structural CSS for the /application/layouts/scripts/header.phtml
+    file.
+  
+  +--------------------------------------------------------------------------------------+
+  ||--------------------||----------------------------------------||--------------------||
+  || div.header_left    || div.header_center                      || div.header_right   ||
+  ||                    ||                                        ||                    ||
+  ||                    ||                                        ||                    ||
+  ||--------------------||----------------------------------------||--------------------||
+  |                                                                                      |
+  |                                                                                      |
+ 
+ 
+ */
+
+
+#header div.header_left {
+    float: left;
+	width: 25%;
+	height: 50px;
+	overflow: hidden:
+}
+
+#header div.header_center {
+	float: none;
+	width:  49%;
+	
+	margin: 0 auto;
+	text-align: center;
+	height: 50px;
+	overflow: hidden:
+}
+
+#header div.header_right {
+	float: right;
+	width: 25%;
+	height: 50px;
+	overflow: hidden:
+}
+
+/******* Stuff in the left side of the header *******/
+
+#header div.header_left img.logo {
+	padding: 5px;
+	float: left;
+}
+
+/******* Stuff in the center of the header *******/
+#header div.header_center p.title {
+	margin: 10px 0px 5px 0px;
+}
+
+
+
+/******* Stuff in the right side of the header ******/
+#header div.header_right div.user_tools {
+	white-space: nowrap;
+	float:left;
+}
+
+#header div.header_right div.app_menu {
+	float: right;
+	width:40px;
+	bottom: 25px;
+	position:absolute; 
+	right:0;
+	padding-right:10px;
+}

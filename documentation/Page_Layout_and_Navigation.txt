@@ -1,0 +1,82 @@
+
+
+This application uses the features of Zend’s Layout.  The layout HTML files 
+are contained in the directory /layout/scripts:
+
+layout.phtml – The parent layout file.  This is the “master” layout that 
+contains all the other layout elements and the “holds” the view from the MVC.
+
+header.phtml – The visual elements of the header for each page.  Contains 
+the common header elements; menu, application menu, user menu etc… that 
+appears across all pages in the application.  
+
+footer.phtml – The visual elements of the footer for each page.
+
+partials/appmenu.phtml – A partial for building the HTML for the application 
+menu.
+
+The css for the layout is contained in the /public/css/layout directory:
+
+body.css – The structural css for the main body aka the layout.phtml.
+
+body-print.css – The structural css for the main body when the page is 
+printed.
+
+header.css – The structural css for the contents of the header.
+
+header-print.css - The structural css for the contents of the header when 
+printed.
+
+footer.css - The structural css for the contents of the footer.
+
+footer-print.css - The structural css for the contents of the footer when 
+printed.
+
+menu.css - The structural css for the contents of the menu bar.
+
+menu-print.css - The structural css for the contents of the menu bar when 
+printed.
+
+app-menu.css - The structural css for the contents of the application menu.
+
+app-menu-print.css - The structural css for the contents of the application 
+menu when printed.
+
+
+  +-----------------------------------------------------------------------------+
+  |                                                                             |
+  |                                 #header                                     |
+  |                                                                             |
+  |                                                                             |
+  |-----------------------------------------------------------------------------|
+  |                                                                            ^|
+  |                                                                            H|
+  |                                                                            H|
+  |                                                                            H|
+  |                                #mainContent                                H|
+  |                                                                            H|
+  |                                                                            H|
+  |                                                                            H|
+  |                                                                            H|
+  |                                                                            v|
+  |<==========================================================================> |
+  |-----------------------------------------------------------------------------|
+  |                                 #footer                                     |
+  +-----------------------------------------------------------------------------+
+  
+  
+  +--------------------------------------------------------------------------------------+
+  ||--------------------||----------------------------------------||--------------------||
+  || div.header_left    || div.header_center                      || div.header_right   ||
+  ||                    ||                                        ||                    ||
+  ||                    ||                                        ||                    ||
+  ||--------------------||----------------------------------------||--------------------||
+  |                                                                                      |
+  |                                                                                      |
+
+http://framework.zend.com/manual/1.12/en/learning.quickstart.create-layout.html
+
+http://framework.zend.com/manual/1.12/en/zend.layout.html
+
+
+

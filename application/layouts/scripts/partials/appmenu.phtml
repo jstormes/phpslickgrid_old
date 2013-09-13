@@ -1,0 +1,19 @@
+<ul class="appmenu">
+
+<li><a class="app-menu-icon"  href="#"><img style="margin:0px;border:0px;padding:0px" src="/images/layout/gear.png" /></a><ul>
+
+
+<?php
+// // See _initNavigation() in the Bootstrap.php file.
+foreach ($this->menu as $element)
+{
+	$uri=$element['uri'];
+	$label = $element['label'];
+	
+	echo "<li>\n";
+	echo "	<a href='$uri'>$label</a>\n";
+	echo "</li>\n";	
+}
+?>
+</ul>
+</ul>
