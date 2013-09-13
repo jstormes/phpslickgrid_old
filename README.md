@@ -33,8 +33,8 @@ DATABASES:
 To setup the databases you will need to run the sql scripts in the 
 /setup directory.
 
-p_slickgrid_dev.sql Ð Will setup the application database.
-P_shared_dev.sql Ð Will setup the shared database.
+p_slickgrid_dev.sql - Will setup the application database.
+P_shared_dev.sql - Will setup the shared database.
 
 LOGGING IN:
 -----------
