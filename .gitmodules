@@ -1,3 +1,6 @@
 [submodule "public/slickgrid"]
 	path = public/slickgrid
 	url = git@github.com:mleibman/SlickGrid.git
+[submodule "public/bootstrap"]
+	path = public/bootstrap
+	url = git@github.com:twbs/bootstrap.git

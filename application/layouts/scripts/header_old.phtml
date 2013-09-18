@@ -1,0 +1,45 @@
+
+<div class="header_left">
+<img class="logo" src="/images/logo.png" />
+</div>
+
+<div class="header_right">
+    <?php if ($this->user) { ?>
+    <div style="float:right;">
+        <div class="noPrint user_tools">Logged in as <a href="<?php echo $this->ProfileURL; ?>"><?php echo $this->user['user_nm']; ?></a> &nbsp; &nbsp; </div>
+        <div class="noPrint user_tools"><b><a href="<?php echo $this->LogInOutURL; ?>">Sign out</a></b> &nbsp; &nbsp; </div> 
+    </div>
+    <?php } // $this->user ?>
+    <div style="clear:both"></div>
+    
+    <?php if ($this->appMenu) { ?>
+	<div class="app_menu">
+	<?php
+	// appmenu.phtml is partial for our app menu
+	echo $this->partial('partials/appmenu.phtml', array('menu' => $this->appMenu));
+ 	?>
+ 	</div>
+ 	<?php } // $this->enable_navigation ?>
+ 	
+ 	<div style="clear:both;"></div>
+</div>
+
+<div class="header_center">
+<p class='title'><b><?php echo $this->title; ?></b></p>
+<p class='title'><b><?php echo $this->sub_title; ?></b></p>
+</div>
+
+
+
+
+<div style="clear:both;"></div>
+
+<?php //if ($this->navigation) { ?>
+<div class="navigation" style="width:auto;"><?php echo $this->navigation()->menu(); ?>&nbsp;</div>
+<?php //} // $this->enable_navigation ?>
+
+<div style="clear:both;"></div>
+
+
+
+

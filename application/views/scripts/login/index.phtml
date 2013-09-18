@@ -1,33 +1,54 @@
-<div style="witdh:100%; height:100%;background-color:#f2f2f2;">
-<form enctype="application/x-www-form-urlencoded" action="" method="post" >
+<div style="witdh: 100%; height: 100%; background-color: #f2f2f2;">
+	<form enctype="application/x-www-form-urlencoded" action=""
+		method="POST" accept-charset="UTF-8">
 
     <?php if ($this->message!='') {?>
-    <div id="view-message" style="padding:5px; width:268px;position:absolute;top: 20%;left: 50%;margin-top: -50px;margin-left: -140px;border:1px solid;border-color:red;background-color:white;word-wrap:break-word;overflow:auto;">
+    <div id="view-message"
+			style="padding: 5px; width: 268px; position: absolute; top: 20%; left: 50%; margin-top: -50px; margin-left: -140px; border: 1px solid; border-color: red; background-color: white; word-wrap: break-word; overflow: auto;">
     <?php echo $this->message; ?>
     </div>
     <?php } ?>
     
-	<div id="view-content" style="position:absolute;top: 35%;left: 50%;margin-top: -50px;margin-left: -140px;">
-		<table style="width:280px;height:100px;border:1px solid;background-color:white;">
-			<tr>
-				<td>Email:</td><td><?php echo $this->formText("email",$this->email,array('style'=>'width:200px')); ?></td>
-			</tr>
-			<tr>
-				<td>Password:</td><td><?php echo $this->formPassword("password",$this->password,array('style'=>'width:200px')); ?></td>
-			</tr>
-			<tr>
-				<td colspan="2">
-					<div style='float:left;'><?php echo $this->formSubmit("login","Login"); ?></div>
-					<div style='float:right;'>
-						<div style='float:left;'><?php echo $this->formSubmit("forgot_password","Forgot Password",array('onclick'=>'this.form.action="/login/forgot";')); ?></div>
-						<div style='float:left;'><?php echo $this->formSubmit("request_access","Request Access",array('onclick'=>'this.form.action="/login/request";')); ?></div>
+
+			<div class="row  center" style="width: 300px;">
+			<div class="span4">
+				<div class="well">
+					<legend>Sign In</legend>
+
+					<div class="alert alert-error">
+						<a class="close" data-dismiss="alert" href="#">x</a>Incorrect
+						Username or Password!
 					</div>
-				</td>
-		    </tr>
-		</table>
-	</div>
-	
-</form>
+							<?php echo $this->formText("email",$this->email,array('class'=>'span3','placeholder'=>'Email Address')); ?>
+							<?php echo $this->formPassword("password",$this->password,array('class'=>'span3','placeholder'=>'Password')); ?>
+							<!--   <label class="checkbox"> <input
+								type="checkbox" name="remember" value="1"> Remember Me
+							</label> -->
+
+
+					<div class="row">
+						<div class="span2">
+							<?php echo $this->formSubmit("login","Login",array('class'=>'span1 btn-info btn')); ?>
+					
+							<div class="span1">
+							<?php echo $this->formSubmit("forgot_password","Forgot Password",array('onclick'=>'this.form.action="/login/forgot";','class'=>'btn-info btn')); ?>
+							<?php echo $this->formSubmit("request_access","Request Access",array('onclick'=>'this.form.action="/login/request";','class'=>'btn-info btn')); ?>
+							</div>
+						</div>
+					</div>
+
+
+
+
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+	</form>
 </div>
 <script>
 window.onload = function() {

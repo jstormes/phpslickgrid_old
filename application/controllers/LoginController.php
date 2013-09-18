@@ -204,6 +204,20 @@ class LoginController extends Zend_Controller_Action
     
     public function indexAction()
     { 
+    	/**
+		 * @var Zend_Controller_Action_Helper_ViewRenderer
+    	 */
+    	//$viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
+    	$viewRenderer = new Zend_Controller_Action_Helper_ViewRenderer();
+    	$p=$viewRenderer->getModuleDirectory();
+    	//$p=$viewRenderer->getViewScriptPathNoControllerSpec();
+    	
+    	$p=$this->view->getScriptPath('');
+    	$n=$viewRenderer->getViewScript();
+    	
+    	$viewRenderer->setScriptAction('test');
+    	$this->log->debug($p.$n);
+    	
         $this->view->headTitle('Login');
         
         $this->view->message='';

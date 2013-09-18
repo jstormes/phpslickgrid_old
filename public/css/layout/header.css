@@ -17,6 +17,98 @@
  */
 
 
+/* Default Computer Screen ( Mouse Driven )*/
+.navbar {
+ position: absolute;
+ bottom: 0;
+ width:100%;
+ min-height: 22px;
+ margin-bottom: 0px;
+ margin-top: 0px;
+  }
+  
+
+.navbar-nav > li > a {
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.navbar-collapse {
+    border-top: 1px solid;
+}
+
+.navbar-brand {
+display:none;
+}
+
+
+
+
+/* Pad and Phone Screen ( Touch Driven) */
+/* Reset back to Bootstrap defaults */
+@media (max-width: 991px) {
+  #header {
+ /*   font-size: 21px; */
+	border-bottom: 1px solid black;
+  }
+  .navbar {
+position: static;
+ bottom: 0;
+ width:100%;
+ min-height: 50px;
+ margin-bottom: 00px;
+  border: 1px solid transparent;
+
+  }
+  
+.navbar-nav > ul {
+	z-index:1000;
+  background: #ffffff;
+}
+
+.navbar-nav > li {
+	z-index:1000;
+  /*background: #ffffff;*/   /* this fixes transparent menu in small format but messes up med format*/
+}  
+  
+.navbar-nav > li > a {
+	  padding-top: 10px;
+  padding-bottom: 10px;
+
+}
+
+.navbar-collapse {
+    border-top: 1px solid transparent;
+	max-height: 340px;
+}
+  
+  .navbar-brand {
+	display:block;
+	}
+	
+#header {
+
+	height:50px;        /* Our header is 50 px high */
+
+	}
+	
+#mainContent {
+
+	top:52px;   			/* Start our mainContent below the header */
+
+}
+}
+
+
+
+
+
+
+
+
+
+
+
 #header div.header_left {
     float: left;
 	width: 25%;
@@ -40,6 +132,7 @@
 	height: 50px;
 	overflow: hidden:
 }
+
 
 /******* Stuff in the left side of the header *******/
 

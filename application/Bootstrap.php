@@ -378,6 +378,15 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
  		$this->layout = $this->getResource('layout');
  		$this->view = $this->layout->getView();
  		
+ 		
+ 		// *******************************************************
+ 		// * Bootstrap front-end framwork 
+ 		// * http://getbootstrap.com/
+ 		// *******************************************************
+ 		$this->view->headLink()->appendStylesheet('/bootstrap/dist/css/bootstrap.css','screen, print');
+ 		$this->view->headScript()->appendFile('//code.jquery.com/jquery-1.7.min.js');
+ 		$this->view->headScript()->appendFile('/bootstrap/dist/js/bootstrap.min.js');
+ 		
  		// Poplate the base css files
  		$this->view->headLink()->appendStylesheet('/css/layout/body.css');    // Bind screen CSS for our layout
  		$this->view->headLink()->appendStylesheet('/css/layout/body-print.css','print'); // Bind print CSS for our layout
@@ -390,10 +399,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
  		$this->view->user = $this->user;
  		
  		// http://fortawesome.github.io/Font-Awesome/
- 		$this->view->headLink()->appendStylesheet('//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css','screen, print'); // Bind CSS for Font-Awsome
+ 		$this->view->headLink()->appendStylesheet('//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css','screen, print'); 
 	
+ 		
+ 		 		
  		// set the default title from the config
- 		$this->view->title = $this->config->application_name;    
+ 		$this->view->app_name = $this->config->application_name;    
+ 		$this->view->title = "Project Name";
 	
  		// Watermark to show envirment, helpfull so you don't accidently update production.
  		$this->view->watermark="";
@@ -454,8 +466,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	
 			// Bind our menu into the view
 			$this->menu = new Zend_Navigation($this->config->menu);
+			
+			$this->view->registerHelper(new ZFBootstrap_View_Helper_Menu(), 'menu');
+			
 			//Zend_Registry::set('navigation', $this->menu);
 			//Zend_Registry::set('Zend_Navigation', $this->menu);
+			
+			
 	
 			// Load our role into the menue
 			$this->view->navigation($this->menu)->setAcl($this->acl)->setRole(trim($this->role));

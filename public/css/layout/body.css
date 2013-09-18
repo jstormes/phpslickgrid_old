@@ -30,15 +30,8 @@
 */
 
 html, body {
-	width:100%;
-	height:100%;
-	margin:0;
-	padding:0;
-	border:0;			/* This removes the border around the viewport in old versions of IE */
-	
-	min-width:600px;
-	
 	font:12px arial,sans-serif;
+	overflow:hidden;
 }
 
 #header {
@@ -52,11 +45,11 @@ html, body {
 
 #mainContent {
 	overflow:auto;      /* Let the scroll bars wrap the mainContent div not the body */
-	position:absolute;  /* The mainBody is set in stone */
-	top:84px;  			/* Start our mainContent below the header */
+	position:absolute;   /* The mainBody is set in stone */
+	top:84px;   			/* Start our mainContent below the header */
 	left: 0px; 
-	right:0px; 			/* This may not be right or needed */
-	bottom:11px;        /* This may not be right or needed */
+	right:0px;  			/* This may not be right or needed */
+	bottom:17px;        /* This may not be right or needed */
 	width:100%;
 }
 
@@ -65,12 +58,29 @@ html, body {
 	position:absolute; 
 	bottom:0; 
 	left:0; 
-	height:11px;        /* Footer is 10px high */
+	height:16px;        /* Footer is 10px high */
 	width:100%;
 	background-color: #f2f2f2;
 }
 
 
-/* Boilerplate start hear */
+/* Boilerplate start here */
 .page-break  { display: none; } /* Used for putting page breaks in printout of site */
 
+.center { 					/* Center for bootstrap */
+	float: none;
+     margin-left: auto;
+     margin-right: auto;
+}
+
+
+.full-container {
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.nowrap {
+	white-space: nowrap;
+}

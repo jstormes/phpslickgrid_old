@@ -1,45 +1,84 @@
+<!-- Fixed navbar -->
+<div class="hidden-xs hidden-sm">
+	<div class="row">
+		<div class="col-md-3">
+			<div class="pull-left">
+				<img style="padding: 4px;" class="logo" src="/images/logo.png" />
+			</div>
+		</div>
+		<div class="col-md-6 ">
+		<div class="row">
+			<div class="col-md-12 text-center"> &nbsp;
+			</div>
+		</div>
+			<div class="row">
+			<div class="col-md-12 text-center">
+				<p class='title'>
+					<b><?php echo $this->app_name; ?></b>
+				</p>
+		    </div>
+		    <div class="row">
+			<div class="col-md-12 text-center">
+				<p class='title'>
+					<b><?php echo $this->title; ?></b>
+				</p>
+			</div>
+		    </div>
+			
+			</div>
+		</div>
+		<div class="col-md-3 ">
+			<div class="row">
+				<div class="col-md-8 text-right nowrap">
+					Logged in as <a href="<?php echo $this->ProfileURL; ?>"><?php echo $this->user['user_nm']; ?></a>
+				</div>
+				<div class="col-md-4 nowrap">
+					<b><a href="<?php echo $this->LogInOutURL; ?>">Sign Out</a></b>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">&nbsp;</div>
+			</div>
 
-<div class="header_left">
-<img class="logo" src="/images/logo.png" />
+			<div class="row">
+
+				<div class="col-md-11 text-right">
+					<!-- Customer Selector Could Go Here. -->
+				</div>
+				<div class="col-md-1">&nbsp;</div>
+			</div>
+		</div>
+	</div>
 </div>
 
-<div class="header_right">
-    <?php if ($this->user) { ?>
-    <div style="float:right;">
-        <div class="noPrint user_tools">Logged in as <a href="<?php echo $this->ProfileURL; ?>"><?php echo $this->user['user_nm']; ?></a> &nbsp; &nbsp; </div>
-        <div class="noPrint user_tools"><b><a href="<?php echo $this->LogInOutURL; ?>">Sign out</a></b> &nbsp; &nbsp; </div> 
-    </div>
-    <?php } // $this->user ?>
-    <div style="clear:both"></div>
-    
-    <?php if ($this->appMenu) { ?>
-	<div class="app_menu">
+
+<div class="navbar navbar-default navbar-static-top">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse"
+			data-target=".navbar-collapse">
+			<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+				class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" href="#"
+			style="background-image: url('/images/layout/development.png'); background-repeat: repeat-x; background-size: auto 50px;"><b><?php echo $this->title; ?></b></a>
+	</div>
+	<div class="navbar-collapse collapse">
+
+		<!-- Left Nav -->
+	<?php echo $this->navigation()->menu()->setUlClass('nav navbar-nav'); ?>
+
+
+	<!-- Right Nav -->
 	<?php
 	// appmenu.phtml is partial for our app menu
-	echo $this->partial('partials/appmenu.phtml', array('menu' => $this->appMenu));
- 	?>
- 	</div>
- 	<?php } // $this->enable_navigation ?>
- 	
- 	<div style="clear:both;"></div>
-</div>
-
-<div class="header_center">
-<p class='title'><b><?php echo $this->title; ?></b></p>
-<p class='title'><b><?php echo $this->sub_title; ?></b></p>
+	echo $this->partial ( 'partials/appmenu.phtml', array (
+			'menu' => $this->appMenu 
+	) );
+	?>
+		
+	</div>
+	<!--/.nav-collapse -->
 </div>
 
 
-
-
-<div style="clear:both;"></div>
-
-<?php //if ($this->navigation) { ?>
-<div class="navigation" style="width:auto;"><?php echo $this->navigation()->menu(); ?>&nbsp;</div>
-<?php //} // $this->enable_navigation ?>
-
-<div style="clear:both;"></div>
-
-
-
-
+<!-- Fixed navbar -->
