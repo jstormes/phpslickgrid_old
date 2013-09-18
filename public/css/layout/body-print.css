@@ -43,17 +43,12 @@ img.logo {
     display: none;
 }
 
-.topnav {
-	display: none;
-}
-
-.userid {
-	display: none;
-}
 
 #footer {
 	font-size:8pt;
 	padding:3px;
+	position: fixed;
+    bottom: 0;
 }
 
 .noPrint {

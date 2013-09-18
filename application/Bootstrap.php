@@ -388,12 +388,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
  		$this->view->headScript()->appendFile('/bootstrap/dist/js/bootstrap.min.js');
  		
  		// Poplate the base css files
- 		$this->view->headLink()->appendStylesheet('/css/layout/body.css');    // Bind screen CSS for our layout
+ 		$this->view->headLink()->appendStylesheet('/css/layout/body.css','screen');    // Bind screen CSS for our layout
  		$this->view->headLink()->appendStylesheet('/css/layout/body-print.css','print'); // Bind print CSS for our layout
- 		$this->view->headLink()->appendStylesheet('/css/layout/header.css');    // Bind screen CSS for our header
- 		$this->view->headLink()->appendStylesheet('/css/layout/header-print.css','print'); // Bind print CSS for our header
- 		$this->view->headLink()->appendStylesheet('/css/layout/footer.css');    // Bind screen CSS for our header
- 		$this->view->headLink()->appendStylesheet('/css/layout/footer-print.css','print'); // Bind print CSS for our header
+ 		$this->view->headLink()->appendStylesheet('/css/layout/header.css','screen');    // Bind screen CSS for our header
  		 	
  		// User info to the view
  		$this->view->user = $this->user;
@@ -438,9 +435,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 				$apps=$row->findDependentRowset($app_model);
 			}
 			
-			// Bind application menu to the view
-			$this->view->headLink()->appendStylesheet('/css/layout/app-menu.css');    // Bind screen CSS for our layout
-			$this->view->headLink()->appendStylesheet('/css/layout/app-menu-print.css','print');    // Bind screen CSS for our layout
  			$this->view->appMenu = array();
  			$split_hostname=explode(".", $_SERVER['SERVER_NAME']);
  			foreach($apps as $key=>$app) {
@@ -459,10 +453,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			 
 			// Add menu as a resource to the acl
 			$this->acl->add(new Zend_Acl_Resource('menu'));
-	
-			// Bind css for our navivation
-			$this->view->headLink()->appendStylesheet('/css/layout/menu.css');
-			$this->view->headLink()->appendStylesheet('/css/layout/menu-print.css','print');
 	
 			// Bind our menu into the view
 			$this->menu = new Zend_Navigation($this->config->menu);

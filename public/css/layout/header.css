@@ -16,149 +16,68 @@
  
  */
 
-
 /* Default Computer Screen ( Mouse Driven )*/
 .navbar {
- position: absolute;
- bottom: 0;
- width:100%;
- min-height: 22px;
- margin-bottom: 0px;
- margin-top: 0px;
-  }
-  
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	min-height: 22px;
+	margin-bottom: 0px;
+	margin-top: 0px;
+}
 
-.navbar-nav > li > a {
-    padding-top: 0px;
-    padding-bottom: 0px;
+.navbar-nav>li>a {
+	padding-top: 0px;
+	padding-bottom: 0px;
 }
 
 .navbar-collapse {
-    border-top: 1px solid;
+	border-top: 1px solid;
 }
 
 .navbar-brand {
-display:none;
+	display: none;
 }
-
-
-
 
 /* Pad and Phone Screen ( Touch Driven) */
 /* Reset back to Bootstrap defaults */
-@media (max-width: 991px) {
-  #header {
- /*   font-size: 21px; */
-	border-bottom: 1px solid black;
-  }
-  .navbar {
-position: static;
- bottom: 0;
- width:100%;
- min-height: 50px;
- margin-bottom: 00px;
-  border: 1px solid transparent;
-
-  }
-  
-.navbar-nav > ul {
-	z-index:1000;
-  background: #ffffff;
-}
-
-.navbar-nav > li {
-	z-index:1000;
-  /*background: #ffffff;*/   /* this fixes transparent menu in small format but messes up med format*/
-}  
-  
-.navbar-nav > li > a {
-	  padding-top: 10px;
-  padding-bottom: 10px;
-
-}
-
-.navbar-collapse {
-    border-top: 1px solid transparent;
-	max-height: 340px;
-}
-  
-  .navbar-brand {
-	display:block;
+@media ( max-width : 991px) {
+	#header { /*   font-size: 21px; */
+		border-bottom: 1px solid black;
 	}
-	
-#header {
-
-	height:50px;        /* Our header is 50 px high */
-
+	.navbar {
+		position: static;
+		bottom: 0;
+		width: 100%;
+		min-height: 50px;
+		margin-bottom: 00px;
+		border: 1px solid transparent;
 	}
-	
-#mainContent {
-
-	top:52px;   			/* Start our mainContent below the header */
-
-}
-}
-
-
-
-
-
-
-
-
-
-
-
-#header div.header_left {
-    float: left;
-	width: 25%;
-	height: 50px;
-	overflow: hidden:
-}
-
-#header div.header_center {
-	float: none;
-	width:  49%;
-	
-	margin: 0 auto;
-	text-align: center;
-	height: 50px;
-	overflow: hidden:
+	.navbar-nav>ul {
+		z-index: 1000;
+		background: #ffffff;
+	}
+	.navbar-nav>li {
+		z-index: 1000;
+		/*background: #ffffff;*/
+		/* this fixes transparent menu in small format but messes up med format*/
+	}
+	.navbar-nav>li>a {
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+	.navbar-collapse {
+		border-top: 1px solid transparent;
+		max-height: 340px;
+	}
+	.navbar-brand {
+		display: block;
+	}
+	#header {
+		height: 50px; /* Our header is 50 px high */
+	}
+	#mainContent {
+		top: 52px; /* Start our mainContent below the header */
+	}
 }
 
-#header div.header_right {
-	float: right;
-	width: 25%;
-	height: 50px;
-	overflow: hidden:
-}
-
-
-/******* Stuff in the left side of the header *******/
-
-#header div.header_left img.logo {
-	padding: 5px;
-	float: left;
-}
-
-/******* Stuff in the center of the header *******/
-#header div.header_center p.title {
-	margin: 10px 0px 5px 0px;
-}
-
-
-
-/******* Stuff in the right side of the header ******/
-#header div.header_right div.user_tools {
-	white-space: nowrap;
-	float:left;
-}
-
-#header div.header_right div.app_menu {
-	float: right;
-	width:40px;
-	bottom: 25px;
-	position:absolute; 
-	right:0;
-	padding-right:10px;
-}
