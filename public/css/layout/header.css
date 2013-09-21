@@ -63,8 +63,8 @@
 		/* this fixes transparent menu in small format but messes up med format*/
 	}
 	.navbar-nav>li>a {
-		padding-top: 10px;
-		padding-bottom: 10px;
+		padding-top: 13px;
+		padding-bottom: 15px;
 	}
 	.navbar-collapse {
 		border-top: 1px solid transparent;

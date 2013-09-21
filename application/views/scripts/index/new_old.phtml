@@ -1,0 +1,69 @@
+<style type="text/css">
+#projectForm { width: 500px; }
+#projectForm label { width: 250px; }
+#projectForm label.error, #projectForm input.submit { margin-left: 253px; }
+</style>
+<script type="text/javascript">
+
+	$(function () {
+
+		$(document).ready(function() {
+
+            $("#s1").dropdownchecklist( {icon: {}, emptyText: "Please select ...", maxDropHeight: 150, width: 400, height:200} );
+
+        });
+     });
+</script>
+<div id="form">
+	<form class="projectForm" id="projectForm" action="/index/create" method="post">
+	<input type="hidden" id="customer_id" name="customer_id" value="<?=$this->customer_id;?>">
+	<table style="width:100%;">
+		<tr>
+			<td><label>Project Name</label></td>
+			<td>
+				<input type="text" id="project_txt" name="project_txt" required>
+			</td>
+		</tr>
+		<tr>
+			<td><label>Project Description</label></td>
+			<td>
+				<textarea rows="4" cols="50" id="project_desc" name="project_desc"></textarea>
+			</td>
+		</tr>
+		<tr>
+			<td><label>Project Lead</label></td>
+			<td>
+				<select name="project_lead">
+					<option>Please select ...</option>
+					<?php 
+						foreach($this->team_members as $member) {
+							echo "<option value='{$member['user_id']}'>{$member['user_nm']}</option>\n";
+						}
+					?>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><label>Team Members</label></td>
+			<td>
+				<select id="s1" name="s1[]" multiple="multiple">
+					<?php 
+						foreach($this->team_members as $member) {
+							$selected = ($member['user_id'] == $this->projects[0]['project_lead']) ? "selected" : "";
+							echo "<option value='{$member['user_id']}' {$selected}>{$member['user_nm']}</option>\n";
+						}
+					?>
+
+		        </select>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<input type="submit" value="Create" >
+			</td>
+		</tr>
+	</table>		
+		<div id="upload"></div>
+	</form>
+</div>

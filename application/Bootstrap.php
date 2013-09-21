@@ -396,7 +396,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
  		$this->view->user = $this->user;
  		
  		// http://fortawesome.github.io/Font-Awesome/
- 		$this->view->headLink()->appendStylesheet('//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css','screen, print'); 
+ 		$this->view->headLink()->appendStylesheet('//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css','screen, print'); 
 	
  		
  		 		
@@ -405,10 +405,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
  		$this->view->title = "Project Name";
 	
  		// Watermark to show envirment, helpfull so you don't accidently update production.
- 		$this->view->watermark="";
+ 		$this->view->watermark=false;
  		// If watermark is enabled in the config put a background image in the header
  		if ($this->config->watermark==1)
- 			$this->view->watermark="style=\"background-image:url('/images/layout/".APPLICATION_ENV.".png');background-repeat:repeat-x;\"";
+ 			$this->view->watermark="/images/layout/".APPLICATION_ENV.".png";
+ 		//	$this->view->watermark="style=\"background-image:url('/images/layout/".APPLICATION_ENV.".png');background-repeat:repeat-x;background-size:\"";
 	
  		// Links for the user toolbar.
  		$this->log->debug($this->ProfileURL);

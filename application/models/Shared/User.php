@@ -5,6 +5,15 @@ class Application_Model_Shared_User extends Zend_Db_Table_Abstract
 
     protected $_name = 'user';
     
+    protected $_referenceMap    = array(
+    		'user_app_role' => array(
+    				'columns'           => array('user_id'),
+    				'refTableClass'     => 'Application_Model_Shared_UserAppRole',
+    				'refColumns'        => array('user_id')
+    		)
+    
+    );
+    
     protected function _setupDatabaseAdapter()
     {
         // see _initDatabase() in the Bootstrap.php file
@@ -46,8 +55,8 @@ class Application_Model_Shared_User extends Zend_Db_Table_Abstract
         if (!($user)) {
             $user=$this->createRow();
             $user['user_nm']='Unknown';
-            $user['user_abbr']='UNK';
-            $user['user_full_nm']='Unknown User';
+            //$user['user_abbr']='UNK';
+            //$user['user_full_nm']='Unknown User';
         }
         $user->password="";
         $user->salt='';

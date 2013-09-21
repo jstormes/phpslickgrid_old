@@ -1,0 +1,145 @@
+
+<script>
+ $(document).ready(function() {
+			        window.prettyPrint() && prettyPrint();
+
+			        $('#project_lead').multiselect();
+
+			        $('#team_members').multiselect({
+			        	includeSelectAllOption: true,
+			        	enableFiltering: 1,
+			        	maxHeight: 150
+			        });
+			       
+			        
+ });
+ </script>
+
+
+
+<form class="form-horizontal" id="projectForm" action="/index/create"
+	method="post" role="form">
+
+	<div class="container">
+		<div class="row">&nbsp;</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+
+			<div class="col-md-12">
+
+
+				<fieldset>
+
+					<legend class="form-group">Create New Project</legend>
+
+					<div class="form-group">
+						<!-- Project Name -->
+						<label class="control-label" for="project_txt">Project Name</label>
+						<div class="controls">
+							<input type="text" id="project_txt" name="project_txt"
+								placeholder="" class="form-control">
+							<p class="help-block">Project name can contain any letters or
+								numbers, with spaces.</p>
+						</div>
+					</div>
+					
+					
+										<div class="row">
+						<div class="col-md-6">
+
+
+							<div class="form-group">
+								<!-- Project Lead-->
+								<label class="control-label" for="project_lead">Project Lead</label>
+								<div class="controls">
+
+									<select name="project_lead" id="project_lead">
+										<option>Please select ...</option>
+					<?php
+					foreach ( $this->team_members as $member ) {
+						echo "<option value='{$member['user_id']}'>{$member['user_nm']}</option>\n";
+					}
+					?>
+				</select>
+									<p class="help-block">The project lead is the person driving
+										the project.</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<!-- Team Members-->
+								<label class="control-label" for="team_members">Team Members</label>
+								<div class="controls">
+									<select id="team_members" name="team_members[]"
+										multiple="multiple">
+								<?php
+								foreach ( $this->team_members as $member ) {
+									$selected = ($member ['user_id'] == $this->projects [0] ['project_lead']) ? "selected" : "";
+									echo "<option value='{$member['user_id']}' {$selected}>{$member['user_nm']}</option>\n";
+								}
+								?>
+		        			</select>
+									<p class="help-block">The team members have access to the
+										project.</p>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					
+
+					<div class="form-group">
+						<!-- Project Description -->
+						<label class="control-label" for="project_desc">Project
+							Description</label>
+						<div class="controls">
+							<textarea class="form-control" id="project_desc"
+								name="project_desc" rows="3"></textarea>
+
+							<script type="text/javascript">
+		//<![CDATA[
+			CKEDITOR.replace( 'project_desc',
+				{
+				skin : 'BootstrapCK-Skin',
+				 toolbar: 'Basic'
+				});
+		//]]>
+		</script>
+							<p class="help-block">The Project Description can be many lines
+								long and should help others understand your projct.</p>
+						</div>
+					</div>
+
+
+
+				</fieldset>
+
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-md-offset-8 col-md-4">
+				<div class="form-group pull-right">
+					<!-- Button -->
+					<div class="controls ">
+						<button type="submit" class="btn btn-lg btn-primary">Create
+							Project</button>
+						<button class="btn btn-lg btn-primary">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="container"></div>
+
+
+</form>
+
+
