@@ -1,19 +1,23 @@
 <?php
+// namespace PhpSlickGrid\View\Helper\Navigation;
 
-//namespace ZFBootstrap\View\Helper\Navigation;
-
-//use DOMDocument,
-//    DOMXPath,
-//    Zend_Navigation_Container,
-//    Zend_View_Helper_Navigation_Menu;
+// use DOMDocument,
+//     DOMXPath,
+//     Zend_Navigation_Container,
+//     Zend_View_Helper_Navigation_Menu;
 
 /**
+ * This is a copy of the work found at 
+ * https://github.com/michaelmoussa/zf1-navigation-view-helper-bootstrap
+ * 
+ * Thanks Michael,
+ * 
  * Adds support for the Twitter Bootstrap dropdown menus Javascript plugin
  * to the Zend_View_Helper_Navigation_Menu class.
  *
  * @author Michael Moussa <michael.moussa@gmail.com>
  */
-class ZFBootstrap_View_Helper_Menu extends Zend_View_Helper_Navigation_Menu
+class PhpSlickGrid_View_Helper_Menu extends Zend_View_Helper_Navigation_Menu
 {
     /**
      * Intercept renderMenu() call and apply custom Twitter Bootstrap class/id

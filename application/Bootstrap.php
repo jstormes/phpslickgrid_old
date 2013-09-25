@@ -278,17 +278,16 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	
 		if ($UserRow) {
 			if ($UserRow->deleted==0) {
-				$this->user = $UserRow->toArray();
-				$this->user['password']='';    // Obscure the passwords from the data set.
-				$this->user['onetimepad']='';  // Obscure the pad from the data set.
-				$this->user['salt']='';        // Obscure the salt from the data set
+				$this->user = $UserRow;
+				$UserRow->password='';    // Obscure the passwords from the data set.
+				$UserRow->salt='';        // Obscure the salt from the data set
 	
 				$this->Signed_in=true;
 	
 				// Set the user_id in the logger
-				$this->log->setEventItem('user_id', $this->user['user_id']);
+				$this->log->setEventItem('user_id', $this->user->user_id);
 	
-				Zend_Registry::set('user', $this->user);
+				Zend_Registry::set('user', $UserRow);
 				
 				return;
 			}
@@ -384,7 +383,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
  		// * http://getbootstrap.com/
  		// *******************************************************
  		$this->view->headLink()->appendStylesheet('/bootstrap/dist/css/bootstrap.css','screen, print');
- 		$this->view->headScript()->appendFile('//code.jquery.com/jquery-1.7.min.js');
+ 		$this->view->headScript()->appendFile('/js/jquery-1.9.1.min.js');
  		$this->view->headScript()->appendFile('/bootstrap/dist/js/bootstrap.min.js');
  		
  		// Poplate the base css files
@@ -396,7 +395,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
  		$this->view->user = $this->user;
  		
  		// http://fortawesome.github.io/Font-Awesome/
- 		$this->view->headLink()->appendStylesheet('//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css','screen, print'); 
+ 		$this->view->headLink()->appendStylesheet('/font-awesome/css/font-awesome.css','screen, print'); 
 	
  		
  		 		
@@ -458,13 +457,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			// Bind our menu into the view
 			$this->menu = new Zend_Navigation($this->config->menu);
 			
-			$this->view->registerHelper(new ZFBootstrap_View_Helper_Menu(), 'menu');
+			$this->view->registerHelper(new PhpSlickGrid_View_Helper_Menu(), 'menu');
 			
 			//Zend_Registry::set('navigation', $this->menu);
 			//Zend_Registry::set('Zend_Navigation', $this->menu);
 			
-			
-	
 			// Load our role into the menue
 			$this->view->navigation($this->menu)->setAcl($this->acl)->setRole(trim($this->role));
 	

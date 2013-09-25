@@ -1,0 +1,133 @@
+
+<script>
+ $(document).ready(function() {
+	 
+        window.prettyPrint() && prettyPrint();
+
+
+        $('#team_members').multiselect({
+        	includeSelectAllOption: true,
+        	enableFiltering: 1,
+        	maxHeight: 150,
+        	buttonClass: 'form-control'
+        });
+			       		        
+ });
+ </script>
+ 
+
+
+
+
+<form class="form-horizontal" id="projectForm" action="" method="post" role="form">
+
+	<div class="container">
+		<div class="row">&nbsp;</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+
+			<div class="col-md-12">
+
+
+				<fieldset>
+
+					<legend class="form-group"><?= $this->page_title?></legend>				
+					
+					<div class="row">
+						<div class="col-md-3">
+						
+						<div class="form-group <?= $this->project_txt_style ?>">
+							<!-- Project Name -->
+							<label class="control-label" for="project_txt">Project Name</label>
+							<div class="controls">
+								<?= $this->formText('project_txt',$this->project_txt,array("class"=>"form-control"))?>
+								<p class="help-block"><?= $this->project_txt_help ?></p>
+							</div>
+						</div>
+						
+						</div>
+						<div class="col-md-offset-1 col-md-3">
+
+
+							<div class="form-group">
+								<!-- Project Lead-->
+								<label class="control-label" for="project_lead">Project Lead</label>
+								<div class="controls">
+									<?php $users = $this->users; array_unshift($users, "None selected");
+									echo $this->formSelect("project_lead",$this->project_lead,array("class"=>"form-control"),$users)?>
+									
+									<p class="help-block">The project lead is the person driving
+										the project.</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-offset-1 col-md-3">
+							<div class="form-group">
+								<!-- Team Members-->
+								<label class="control-label" for="team_members">Team Members</label>
+								<div class="controls">
+									<?= $this->formSelect("team_members[]",$this->team_members,array("class"=>"form-control"),$this->users)?>
+									
+								<p class="help-block">The team members have access to the
+									project.</p>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					
+
+					<div class="form-group">
+						<!-- Project Description -->
+						<label class="control-label" for="project_desc">Project
+							Description</label>
+						<div class="controls">
+							<textarea class="form-control" id="project_desc"
+								name="project_desc" rows="3">
+								<?= $this->project_desc ?>
+								</textarea>
+
+							<script type="text/javascript">
+							//<![CDATA[
+								CKEDITOR.replace( 'project_desc',
+									{
+									skin : 'BootstrapCK-Skin',
+									 toolbar: 'Basic'
+									});
+							//]]>
+							</script>
+							
+							<p class="help-block">The Project Description can be many lines
+								long and should help others understand your project.</p>
+						</div>
+					</div>
+
+				</fieldset>
+
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-md-offset-8 col-md-4">
+				<div class="form-group pull-right">
+					<!-- Button -->
+					<div class="controls ">
+						<button type="submit" class="btn btn-lg btn-primary"><?= $this->save_btn_title?></button>
+						<button name='cancel' class="btn btn-lg btn-primary">Cancel</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="container"></div>
+
+
+</form>
+
+

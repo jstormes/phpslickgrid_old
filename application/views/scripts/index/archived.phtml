@@ -55,15 +55,8 @@
 	        </td>
 	        <?php if ($this->role=='administrator') { ?>
 	        <td nowrap style="vertical-align: top;">
-	        	<a title="Edit" href="/index/edit/project_id/<?=$Row['project_id']?>">
-					<i class="icon-pencil"></i>
-				</a> &nbsp; &nbsp; &nbsp;
-				<a title="Archive" href="/index/archive/project_id/<?=$Row['project_id']?>">
-					<i class="icon-archive"></i>
-				</a> &nbsp; &nbsp; &nbsp;
-				<a title="Delete" href="/index/delete/project_id/<?=$Row['project_id']?>"
-					onclick="return confirm('WARNING! \n\nAre you sure you want to delete this project? \n\n')">
-					<i class="icon-trash"></i>
+				<a title="UN-Archive" href="/index/unarchive/project_id/<?=$Row['project_id']?>">
+					<i style="font-size:18px;" class="icon-dropbox"></i>
 				</a>
 			</td>
 	        <?php } ?>

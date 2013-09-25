@@ -5,6 +5,14 @@ class Application_Model_Shared_UserAppRole extends Zend_Db_Table_Abstract
 
     protected $_name = 'user_app_role';
     
+    /**
+     * Use the PhpSlickGrid Rowset class
+     * rather than the Zend Rowset class.
+     * 
+     * @var string
+     */
+    protected $_rowsetClass = 'PhpSlickGrid_Db_Table_Rowset';
+    
     protected function _setupDatabaseAdapter()
     {
         // see _initDatabase() in the Bootstrap.php file

@@ -27,8 +27,8 @@
 }
 
 .navbar-nav>li>a {
-	padding-top: 0px;
-	padding-bottom: 0px;
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
 }
 
 .navbar-collapse {
@@ -37,7 +37,7 @@
 
 .navbar-brand {
 	display: none;
-}
+} 
 
 /* Pad and Phone Screen ( Touch Driven) */
 /* Reset back to Bootstrap defaults */
@@ -63,8 +63,8 @@
 		/* this fixes transparent menu in small format but messes up med format*/
 	}
 	.navbar-nav>li>a {
-		padding-top: 13px;
-		padding-bottom: 15px;
+		padding-top: 13px  !important;
+		padding-bottom: 15px  !important;
 	}
 	.navbar-collapse {
 		border-top: 1px solid transparent;
