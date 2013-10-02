@@ -1,0 +1,119 @@
+<div class="container">
+	<div class="row">&nbsp;</div>
+</div>
+
+
+<div class="container">
+	
+	<div class="row">
+		<div class="col-sm-12">
+			<legend class="form-group">Data Load</legend>
+		</div>	
+	</div>	
+	
+	<div class="row">
+		<div class="col-sm-4">
+			<label class="control-label" for="tabname">Tab to load from.</label>
+			<div class="controls">
+				<select class="form-control" name="tabname">
+				  <option>One</option>
+				  <option>Description</option>
+				  <option>ATA</option>
+				  <option>Sub-ATA</option>
+				  <option>Title</option>
+				</select>
+				<p class="help-block">The Excel tab to load the data from.</p>
+			</div>
+		</div>
+	</div>
+	
+	<div class="form-group col-sm-12">
+		<div class="row">
+			<div class="controls">
+				<label for="rename">
+					<input type="checkbox" name="rename" />
+					First row contains column names.
+				</label>
+			</div>		
+		</div>
+		
+		<div class="row">
+			<div class="controls">
+				<label class="control-label" for="rename">
+					<input type="checkbox" name="rename" class="btn btn-lg btn-primary" /> Rename destination column names to source names.
+				</label>
+			</div>		
+		</div>
+	
+	</div>
+	
+	<div class="row">
+		<div class="col-sm-2"><h4>Source Column</h4></div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-2"><h4>Destination Column</h4></div>
+        <div class="col-sm-4"><h4>Status</h4></div>
+	</div>
+
+
+		
+		<div class="row">
+			<div class="col-sm-2"><button type="button" class="btn btn-default">ATA</button></div>
+	        <div class="col-sm-1"><h4> ---&gt; </h4></div>
+	        <div class="col-sm-2">
+		        <select class="form-control">
+				  <option>(Ignore)</option>
+				  <option>Description (text)</option>
+				  <option>ATA (mixed)</option>
+				  <option>Sub-ATA (number)</option>
+				  <option>Title (date)</option>
+				</select>
+			</div>
+	        <div class="col-sm-4"></div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-2"><button type="button" class="btn btn-default">Sub-ATA</button></div>
+	        <div class="col-sm-1"><h4> ---&gt; </h4></div>
+	        <div class="col-sm-2">
+		        <select class="form-control">
+				  <option>(Ignore)</option>
+				  <option>Description</option>
+				  <option>ATA</option>
+				  <option>Sub-ATA</option>
+				  <option>Title</option>
+				</select>
+			</div>
+	        <div class="col-sm-4"></div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-2"><button type="button" class="btn btn-default">Description</button></div>
+	        <div class="col-sm-1"><h4> ---&gt; </h4></div>
+	        <div class="col-sm-2">
+		        <select class="form-control">
+				  <option>(Ignore)</option>
+				  <option>Description</option>
+				  <option>ATA</option>
+				  <option>Sub-ATA</option>
+				  <option>Title</option>
+				</select>
+			</div>
+	        <div class="col-sm-4"></div>
+		</div>
+	
+
+	<div class="row"> &nbsp;</div>
+	
+	<div class="row">
+		<div class="col-sm-offset-8 col-sm-4">
+			<div class="form-group pull-right">
+				<!-- Button -->
+				<div class="controls ">
+					<button type="submit" class="btn btn-lg btn-primary">Load</button>
+					<button name='cancel' class="btn btn-lg btn-primary">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>	
+	
+</div>

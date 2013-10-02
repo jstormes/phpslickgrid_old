@@ -1,4 +1,10 @@
 
-<div class="col-md-12 text-center"> 
+<div id="footer_left" class="col-md-5 text-center">
+<?php echo $this->layout()->footer_left; ?>
+</div>
+<div class="col-md-2 text-center"> 
 Copyright &#169;  <?php echo date('Y'); ?> <a href="<?php echo $this->copyright_link; ?>" target="_blank"><?php echo $this->copyright_company; ?></a>
+</div>
+<div id="footer_right" class="col-md-5 text-right pull-right">
+<?php echo $this->layout()->footer_right; ?>
 </div>

@@ -15,12 +15,28 @@ class ProjectController extends Zend_Controller_Action
         //$this->log->debug("this is a debug msg");
         
         $this->project_id=$this->_request->getParam('project_id',null);
+        
+        
+        /* The layout is not part of the current view
+         * you have to grab a copy of the layout to
+        * change values in the header and footer;
+        */
+        $this->layout = Zend_Layout::getMvcInstance();
     }
 
     public function indexAction()
     {
         // action body
         
+   
+    	$this->layout->footer_right = $this->view->ModalUpload("<i class='icon-upload' />", "Upload Excel File");
+    }
+    
+    public function importAction() 
+    {
+    	// action body
+    	
+    	
     }
 
 }
