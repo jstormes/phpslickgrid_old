@@ -27,13 +27,14 @@
 </div>
 <div id="mainContent">
 <?php echo $this->layout()->content; ?>
+
+
+<!-- Bootstrap Modals -->
+<?php echo $this->layout()->modals; ?>
+<!-- End Bootstrap Modals -->
 </div>
 <div id="footer">
 <?php echo $this->render('footer.phtml');?>
-</div>
-<!-- Place to hide our modals -->
-<div style="z-index:-1;">
-<?php echo $this->layout()->modals; ?>
 </div>
 </body>
 <?php echo $this->inlineScript(); ?>

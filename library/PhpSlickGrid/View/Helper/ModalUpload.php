@@ -48,7 +48,9 @@ class PhpSlickGrid_View_Helper_ModalUpload extends Zend_View_Helper_Abstract
 		</form>	
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->";
+  </div><!-- /.modal -->
+		
+		";
 		
 		$this->layout->modals .= $output;
 		

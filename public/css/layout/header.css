@@ -22,8 +22,11 @@
 	bottom: 0;
 	width: 100%;
 	min-height: 22px;
+	height: 22px;
 	margin-bottom: 0px;
 	margin-top: 0px;
+	border-color: rgb(231, 231, 231);
+	border-top: 1px solid rgb(231, 231, 231);
 }
 
 .navbar-nav>li>a {
@@ -32,7 +35,7 @@
 }
 
 .navbar-collapse {
-	border-top: 1px solid;
+	/*border-top: 1px solid;*/
 }
 
 .navbar-brand {

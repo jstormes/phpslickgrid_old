@@ -382,7 +382,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
  		// * Bootstrap front-end framwork 
  		// * http://getbootstrap.com/
  		// *******************************************************
- 		$this->view->headLink()->appendStylesheet('/bootstrap/dist/css/bootstrap.css','screen, print');
+ 		$this->view->headLink()->appendStylesheet('/bootstrap/dist/css/bootstrap.min.css','screen, print');
  		$this->view->headScript()->appendFile('/js/jquery-1.9.1.min.js');
  		$this->view->headScript()->appendFile('/bootstrap/dist/js/bootstrap.min.js');
  		

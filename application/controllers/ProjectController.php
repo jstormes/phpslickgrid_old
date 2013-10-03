@@ -29,7 +29,7 @@ class ProjectController extends Zend_Controller_Action
         // action body
         
    
-    	$this->layout->footer_right = $this->view->ModalUpload("<i class='icon-upload' />", "Upload Excel File");
+    	$this->layout->footer_right = $this->view->ModalUpload("<i class='icon-upload icon-large'></i>", "Upload Excel File");
     }
     
     public function importAction() 
