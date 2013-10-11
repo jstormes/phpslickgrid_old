@@ -72,6 +72,7 @@
 	.navbar-collapse {
 		border-top: 1px solid transparent;
 		max-height: 340px;
+		background-color: white;
 	}
 	.navbar-brand {
 		display: block;

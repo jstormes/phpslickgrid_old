@@ -15,30 +15,77 @@ class PhpSlickGrid_View_Helper_ModalUpload extends Zend_View_Helper_Abstract
 		
 		/* The layout is not part of the current view
 		 * you have to grab a copy of the layout to
-		* change values in the header and footer;
+		* change values in the header and footer.
 		*/
 		$this->layout = Zend_Layout::getMvcInstance();
 	}
 	
-	public function ModalUpload($HTML, $Title="Upload File", $Help="Select the file to upload.", $Action="upload", $Controller=null)
+	public function ModalUpload($name, $file_class, $options)
  	{
- 		if ($Controller==null)
- 			$formAction=$this->view->url(array('action'=>$Action), null, TRUE);
- 		else
- 			$formAction=$this->view->url(array('action'=>$Action,'controller'=>$Controller), null, TRUE);
+ 		/* Set our defaults */
+ 		$_defaults = array(
+ 			'HTML'=>'Upload',
+ 			'Title'=>'Upload File',
+ 			'Help'=>'Select the file to upload.'
+ 		);
  		
-		$output = @"   
+ 		/* Merge our defaults with the options passed in */
+ 		$options = array_merge($_defaults,$options);
+ 		
+ 		/* if we have am uploaded file from the this instance 
+ 		 * of the class, then instantiate the class to process it.
+ 		 */
+ 		if (isset($_FILES[$name])) {
+ 			if ($_FILES[$name]["error"] > 0)
+ 			{
+ 				/* Don't know how to test this JS */
+ 				echo "<script>\n";
+ 				echo "alert('Error: " . $_FILES[$name]["error"] . "');\n";
+ 				echo "</script>\n";
+ 			}
+ 			else
+ 			{	
+ 				/* Call the logic to process the file */
+ 				$fileProcessor = new $file_class();
+ 				$fileProcessor->ProcessFile($_FILES[$name],$this->view);
+ 			}
+ 		}
+ 		
+ 		/* Variables for our modal template */
+ 		$Title 	= $options['Title'];
+ 		$Help 	= $options['Help'];
+ 		$HTML	= $options['HTML'];
+ 		
+ 		/* Calculate the maximum upload size from the *.ini setting */
+ 		$upload_max_filesize 	= $this->return_bytes(ini_get('upload_max_filesize'));
+ 		$post_max_size 			= $this->return_bytes(ini_get('post_max_size'));
+ 		$MAX_FILE_SIZE 			= ($upload_max_filesize<$post_max_size?$upload_max_filesize:$post_max_size)-1;
+ 		
+ 		/* HTML Template for the Modal box */
+		$modal = @"   
   <!-- Modal Upload -->
-  <div class='modal fade' id='ModalUpload' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+  <div class='modal fade' id='$name' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
     <div class='modal-dialog'>
       <div class='modal-content'>
-	    <form action='$formAction' method='post' enctype='multipart/form-data'>
+        <script>
+	        function ".$name."_on_submit() {
+	          if (typeof document.getElementById('upload').files != 'undefined') {
+			    if (document.getElementById('upload').files[0].size > $MAX_FILE_SIZE) {
+			      alert('File size is too large.');
+			      return false;
+			    }
+			  }
+			  return true;
+			}
+        </script>
+	    <form  method='post' enctype='multipart/form-data' onsubmit='return ".$name."_on_submit()'>
 	      <div class='modal-header'>
 	        <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
 	        <h4 class='modal-title'>$Title</h4>
 	      </div>
 	      <div class='modal-body'>	
-			<input class='btn btn-default' type='file' name='uploadedfile'>
+    		<!-- Name of input element determines name in the array -->
+			<input id='upload' class='btn btn-default' type='file' name='$name'>
 			<p class='help-block'>$Help</p>
 	      </div>
 	      <div class='modal-footer'>
@@ -49,11 +96,39 @@ class PhpSlickGrid_View_Helper_ModalUpload extends Zend_View_Helper_Abstract
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
-		
+  <!-- End Modal Upload -->	
 		";
 		
-		$this->layout->modals .= $output;
+ 		/* Place our modal in with the other modals on current page */
+		$this->layout->modals .= $modal;
 		
-		return "<a href='#ModalUpload' role='button' data-toggle='modal' title='$Title'>$HTML</a>";
+		/* Return a bit of HTML that can trigger this modal */
+		return "<a href='#$name' role='button' data-toggle='modal' title='$Title'>$HTML</a>";
 	}
+	
+	/**
+	 * Calculate the number of bytes from a php.ini 
+	 * setting.
+	 *
+	 * By: jstormes Oct 8, 2013
+	 *
+	 * @param unknown $val
+	 * @return Ambigous <number, string>
+	 */
+	function return_bytes($val) {
+		$val = trim($val);
+		$last = strtolower($val[strlen($val)-1]);
+		switch($last) {
+			// The 'G' modifier is available since PHP 5.1.0
+			case 'g':
+				$val *= 1024;
+			case 'm':
+				$val *= 1024;
+			case 'k':
+				$val *= 1024;
+		}
+		return $val;
+	}
+	
+
 }

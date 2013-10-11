@@ -41,7 +41,7 @@ html, body {
 	height:84px;        /* Our header is 84 px high */
 	width:100%;
 	background-color: #f2f2f2;
-	z-index:2;			/* push our menu over the the #mainContent */
+	z-index:1;			/* push our menu over the the #mainContent */
 }
 
 #mainContent {

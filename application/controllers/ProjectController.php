@@ -24,12 +24,17 @@ class ProjectController extends Zend_Controller_Action
         $this->layout = Zend_Layout::getMvcInstance();
     }
 
+    
     public function indexAction()
     {
         // action body
         
    
-    	$this->layout->footer_right = $this->view->ModalUpload("<i class='icon-upload icon-large'></i>", "Upload Excel File");
+    	$this->layout->footer_right = $this->view->ModalUpload("TestModal"
+    			,'PhpSlickGrid_FileManager_PHPExcelLoader',
+    		array("HTML"=>"<i class='icon-upload icon-large'></i>",
+    		"Help"=>"Select Excel file to upload."
+    		));
     }
     
     public function importAction() 

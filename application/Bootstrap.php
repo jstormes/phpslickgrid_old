@@ -2,22 +2,22 @@
 
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {	
-	// Our Standard Registry objects (Cadidates for Zend Cache)
+	// Our Standard Registry objects (Candidates for Zend Cache)
 	protected $config 			= null; // $this->config->(Option) = applicaiton.ini config option
 	protected $db 				= null; // Application DB
 	protected $log 				= null; // Logging object
-	protected $app 				= null; // Applicaiton specific configuration from shared db.
+	protected $app 				= null; // Application specific configuration from shared db.
 	protected $user 			= null; // The user row from the user table in the shared db.
 
 	// local only properties
 	protected $Signed_in 		= false; // No user signed in by default
 	
-	protected $AuthServer 		= ''; // Authencation server, logins are redirected to this server.
-	protected $LogInOutURL 		= ''; // URL to login/logout of the applicaitons.
+	protected $AuthServer 		= ''; // Authentication server, logins are redirected to this server.
+	protected $LogInOutURL 		= ''; // URL to login/logout of the applications.
 	protected $ProfileURL       = ''; // URL for the user to modify their profile.
 	
 	/***********************************************************************
-	 * Force SSL for our production enviornment.
+	 * Force SSL for our production environment.
 	 **********************************************************************/
 	protected function _initForceSSL() {
 		// if we are command line then just return
@@ -35,7 +35,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	}
 	
 	/***********************************************************************
-	 * Get a copy of our configuration enviornment
+	 * Get a copy of our configuration environment.
 	 **********************************************************************/
 	protected function _initConfig()
 	{
@@ -44,11 +44,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	}
 	
 	/***********************************************************************
-	 * Initilize our databases, setup two connections.
+	 * Initialize our databases, setup two connections.
 	 * 
 	 * The default connection will be used by our standard models in 
 	 * /application/models/DbTables, and a second connection for our shared
-	 * modles in /applicaiton/models/Common.
+	 * modules in /application/models/Common.
 	 **********************************************************************/
 	protected function _initDatabases()
 	{
@@ -60,7 +60,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		// models in the /application/models/Shared directory.
 		Zend_Registry::set('shared_db', $resource->getDb('shared'));
 	
-		// Stup our default database connection
+		// Setup our default database connection
 		$this->bootstrap('db');
 		$db = $this->getPluginResource('db');
 	
@@ -88,18 +88,18 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	}
 	
 	/***********************************************************************
-	 * Initilize our logging.  
+	 * Initialize our logging.  
 	 * 
 	 * All logging more severe that "DEBUG" is sent to the log table of the
-	 * applicaiton database.  Firebug (FirePHP) is only enabled for 
-	 * non produciton enviornments. 
+	 * application database.  Firebug (FirePHP) is only enabled for 
+	 * non production environments. 
 	 * 
 	 * log:
 	 * --------------------------------------------------------------------------------------------
 	 * | log_id  | message     | priority | timestamp  | priorityName | user_id     | request_uri |
 	 * --------------------------------------------------------------------------------------------
 	 * | Primary | Text string | Numeric  | Time error | String text  | user_id of  | URL of the  |
-	 * | Key     | of error    | priority | occured    | of priority  | the user if | request if  |
+	 * | Key     | of error    | priority | occurred   | of priority  | the user if | request if  |
 	 * |         | message.    |          |            |              | available.  | available.  |
 	 * --------------------------------------------------------------------------------------------
 	 **********************************************************************/
@@ -142,7 +142,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	}
 	
 	/***********************************************************************
-	 * Load applicaiton specific infromation from the shared databases.
+	 * Load application specific information from the shared databases.
 	 * 
 	 * This is where we will override any applicaiton.ini configuration with
 	 * database driven configuration data.
@@ -177,8 +177,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	 * 
 	 * view - The most basic role.
 	 * user - Can do anything view can + anything user can.
-	 * admin - Can do anytiing view + user + admin can.
-	 * administrator - Specal role that can do anything.
+	 * admin - Can do anything view + user + admin can.
+	 * administrator - Special role that can do anything.
 	 **********************************************************************/
 	protected function _initACL() {
 		//return;
@@ -195,7 +195,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 				$this->acl->addRole(new Zend_Acl_Role(trim($acl[0])));
 			}
 	
-			// our prvilages match our roles.
+			// our privileges match our roles.
 			if (trim($acl[0])!='administrator')
 				$this->acl->allow(trim($acl[0]), null, trim($acl[0]));
 			else
@@ -208,7 +208,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	/***********************************************************************
 	 * Setup our login/logout URL and profile URL.  Allow for some other 
 	 * server on the same domain to provide login services for multiple 
-	 * applicaitons.  This server could also use OAuth, Active Directory, 
+	 * applications.  This server could also use OAuth, Active Directory, 
 	 * etc...
 	 * 
 	 * As long as the proper cookies are setup to match the shared user table
@@ -236,7 +236,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	 * database.  The final type of login in a HTTP BASIC Auth, used for 
 	 * webservices.
 	 * 
-	 * NOTE: This security is not hardded or tested.  Needs more research
+	 * NOTE: This security is not hardened or tested.  Needs more research
 	 * and though.
 	 * 
 	 * Required Table Structure (Table may contain more columns, but must
@@ -302,7 +302,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		if (isset($_SERVER['REDIRECT_URL']))
 			if (in_array($_SERVER['REDIRECT_URL'],$login_urls))
 				return; // we on on an allowed url,
-						// so return before we redirect to the lgoin server.
+						// so return before we redirect to the login server.
 	
 		// Get our current_url
 		$current_url=urlencode($_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"]);
@@ -313,21 +313,21 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	}
 	
 	/***********************************************************************
-	 * Get the current user role, if there is no current uesr role will be 
-	 * null.  This is what the user can do in the applcation.
+	 * Get the current user role, if there is no current user role will be 
+	 * null.  This is what the user can do in the application.
 	 * 
 	 * The role for the current user for the current application is mapped 
 	 * in the user_app_role mapping table in the shared database.  
 	 * 
 	 * If the user has no mapping in this table the user does not have 
-	 * access to this applicaiton.  Said another way, user access is
+	 * access to this application.  Said another way, user access is
 	 * granted by the entry in the user_app_role table.
 	 * 
 	 * Required Table Structure (Table may contain more columns, but must
 	 * contain these):
 	 * 
 	 * user_app_role:
-	 * Has forigin key constrants with the user, app and role tables in the
+	 * Has foreign key constraints with the user, app and role tables in the
 	 * shared database.
 	 * ------------------------------------------------------------------
 	 * | user_app_role_id | user_id      | app_id      | role_id        |
@@ -384,12 +384,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
  		// *******************************************************
  		$this->view->headLink()->appendStylesheet('/bootstrap/dist/css/bootstrap.min.css','screen, print');
  		$this->view->headScript()->appendFile('/js/jquery-1.9.1.min.js');
+ 		$this->view->headScript()->appendFile('/js/jquery-ui-1.9.2.custom.min.js');
  		$this->view->headScript()->appendFile('/bootstrap/dist/js/bootstrap.min.js');
  		
  		// Poplate the base css files
  		$this->view->headLink()->appendStylesheet('/css/layout/body.css','screen');    // Bind screen CSS for our layout
  		$this->view->headLink()->appendStylesheet('/css/layout/body-print.css','print'); // Bind print CSS for our layout
  		$this->view->headLink()->appendStylesheet('/css/layout/header.css','screen');    // Bind screen CSS for our header
+ 		$this->view->headLink()->appendStylesheet('/css/ui-lightness/jquery-ui-1.9.2.custom.min.css','screen');    // Bind screen CSS for our header
  		 	
  		// User info to the view
  		$this->view->user = $this->user;
@@ -458,9 +460,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			$this->menu = new Zend_Navigation($this->config->menu);
 			
 			$this->view->registerHelper(new PhpSlickGrid_View_Helper_Menu(), 'menu');
-			
-			//Zend_Registry::set('navigation', $this->menu);
-			//Zend_Registry::set('Zend_Navigation', $this->menu);
 			
 			// Load our role into the menue
 			$this->view->navigation($this->menu)->setAcl($this->acl)->setRole(trim($this->role));

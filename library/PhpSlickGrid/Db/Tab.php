@@ -41,7 +41,7 @@ require_once 'Zend/Db/Table/Definition.php';
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class PhpSlickGrid_Db_Excel extends Zend_Db_Table_Abstract
+class PhpSlickGrid_Db_Tab extends Zend_Db_Table_Abstract
 {
 	protected $_rowClass = 'PhpSlickGrid_Db_Table_Row';
 	
