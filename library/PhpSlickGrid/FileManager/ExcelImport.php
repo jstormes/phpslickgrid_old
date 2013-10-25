@@ -142,7 +142,7 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 	}
 	
 	/**
-	 * Push the upload modal into the modal section of the layout.
+	 * Push the upload modal into the modal section of the layout (Step 0).
 	 *
 	 * By: jstormes Oct 22, 2013
 	 *
@@ -167,7 +167,13 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 		$this->layout->modals .= $this->modalView->render('ModalUpload.phtml');
 	}
 	
-	
+	/**
+	 * Present the modal to map the source columns to destination columns 
+	 * (Step 1).
+	 *
+	 * By: jstormes Oct 25, 2013
+	 *
+	 */
 	public function MapData() {
 		
 		/* Create modal by using the Zend_View similar to using the
@@ -251,6 +257,13 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 		echo "</script>\n";
 	}
 	
+	/**
+	 * Load the data from the source columns into the destination columns
+	 * (Step 2).
+	 * 
+	 * By: jstormes Oct 25, 2013
+	 *
+	 */
 	public function LoadData() {
 		/* Create modal by using the Zend_View similar to using the
 		 * view from the controller.
@@ -267,7 +280,7 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 		$this->log->debug($mapping);
 		
 		// Begin Transaction
-		//$this->destTable->getAdapter()->beginTransaction();
+		$this->destTable->getAdapter()->beginTransaction();
 		
 		// Loop over source records
 		/* Database adaptor like Excel file */
@@ -281,14 +294,11 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 		$source_tables=$Excel->listTables();
 		$SourceSchema=$Excel->describeTable($source_tables[$sourceTableIdx]);
 		$SourceData=$Excel->ExcelFetchAllArray($source_tables[$sourceTableIdx]);
-		//$this->log->debug($SourceData);
+
 		foreach($SourceData as $Row=>$Columns){
-//			$this->log->debug($Columns);
  			$NewRow=$this->destTable->fetchNew();
  			foreach($Columns as $SourceColumnName=>$Value) {
-// 				$this->log->debug($SourceColumnName);
  				if ($mapping[$SourceColumnName]!='ignore') {
-// 					$this->log->debug($SourceColumnName);
  					$NewRow->$mapping[$SourceColumnName]=$Value;
  				}
  			}	
@@ -297,14 +307,20 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
  				$NewRow->save();
  			}
  			catch (Exception $Ex) {
- 				$log.=$Ex->getMessage()."<br />\n";
+ 				$log.="Excel Row: $Row ".$Ex->getMessage()."<br />\n";
  			}
 		}
 		
-		if ($log=='')
+		if ($log=='') {
+			// if no errors Commit
+			$this->destTable->getAdapter()->commit();
 			$log="Data Loaded.";
-		// if no errors Commit
-		// else roll back
+		}
+		else {
+			// else roll back
+			$this->destTable->getAdapter()->rollBack();
+		}
+		
 		$this->modalView->log=$log;
 		
 		$this->layout->modals .= $this->modalView->render('LoadData.phtml');
