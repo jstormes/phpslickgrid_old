@@ -37,7 +37,7 @@ require_once 'Zend/Db/Table/Row/Abstract.php';
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class PhpSlickGrid_Db_Table_Row extends Zend_Db_Table_Row_Abstract
+class PHPSlickGrid_Db_Table_Row extends Zend_Db_Table_Row_Abstract
 {
 	protected function _insert()
 	{

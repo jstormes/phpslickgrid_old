@@ -459,7 +459,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 			// Bind our menu into the view
 			$this->menu = new Zend_Navigation($this->config->menu);
 			
-			$this->view->registerHelper(new PhpSlickGrid_View_Helper_Menu(), 'menu');
+			$this->view->registerHelper(new PHPSlickGrid_View_Helper_Menu(), 'menu');
 			
 			// Load our role into the menue
 			$this->view->navigation($this->menu)->setAcl($this->acl)->setRole(trim($this->role));

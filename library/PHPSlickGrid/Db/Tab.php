@@ -41,50 +41,10 @@ require_once 'Zend/Db/Table/Definition.php';
  * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class PhpSlickGrid_Db_Table extends Zend_Db_Table_Abstract
+class PHPSlickGrid_Db_Tab extends Zend_Db_Table_Abstract
 {
-	protected $_rowClass = 'PhpSlickGrid_Db_Table_Row';
+	protected $_rowClass = 'PHPSlickGrid_Db_Table_Row';
 	
-	
-	/**
-	 * getFriendlyName() - Get the Friendly Name for the Users
-	 *
-	 * By: jstormes Sep 25, 2013
-	 *
-	 * @return string
-	 */
-	public function getFriendlyName() {
-		return $this->_friendlyName;
-	}
-	
-	private function _getColumnInformation($ColumnName) {
-		
-		$column = array();
-		
-		$column['name']="Name";
-		
-		$column['sql_type']="SQL Type";
-		$column['grid_type']="Grid Type";
-		
-		$column['max_length'] = 0;  // For string types the maximum number of characters.
-									// For numeric types the maximum number of integer digits.
-		$column['max_decimal'] = 0; // For numeric types the maximum number of digits after the ".".
-		
-	}
-	
-	/**
-	 * getColumnInformation() - Get information about the columns
-	 *
-	 * By: jstormes Sep 25, 2013
-	 *
-	 * @return array
-	 */
-	public function getColumnInformation() {
-		
-		$info = array();
-		
-		
-	}
 	
 	
     /**
@@ -102,7 +62,7 @@ class PhpSlickGrid_Db_Table extends Zend_Db_Table_Abstract
 
         if (is_string($config)) {
             if (Zend_Registry::isRegistered($config)) {
-                trigger_error(__CLASS__ . '::' . __METHOD__ . '(\'registryName\') is not valid usage of PhpSlickGrid_Db_Table, '
+                trigger_error(__CLASS__ . '::' . __METHOD__ . '(\'registryName\') is not valid usage of PHPSlickGrid_Db_Table, '
                     . 'try extending Zend_Db_Table_Abstract in your extending classes.',
                     E_USER_NOTICE
                     );
@@ -137,7 +97,7 @@ class PhpSlickGrid_Db_Table extends Zend_Db_Table_Abstract
      * was found.
      *
      * @param  mixed $key The value(s) of the primary keys.
-     * @return PhpSlickGrid_Db_Table_Rowset Row(s) matching the criteria.
+     * @return PHPSlickGrid_Db_Table_Rowset Row(s) matching the criteria.
      * @throws Zend_Db_Table_Exception
      */
     public function find() {
@@ -154,7 +114,7 @@ class PhpSlickGrid_Db_Table extends Zend_Db_Table_Abstract
      * @param string|array                      $order  OPTIONAL An SQL ORDER clause.
      * @param int                               $count  OPTIONAL An SQL LIMIT count.
      * @param int                               $offset OPTIONAL An SQL LIMIT offset.
-     * @return PhpSlickGrid_Db_Table_Rowset The row results per the Zend_Db_Adapter fetch mode.
+     * @return PHPSlickGrid_Db_Table_Rowset The row results per the Zend_Db_Adapter fetch mode.
      */
     public function fetchAll($where = null, $order = null, $count = null, $offset = null)
     {
@@ -169,7 +129,7 @@ class PhpSlickGrid_Db_Table extends Zend_Db_Table_Abstract
      * @param string|array|Zend_Db_Table_Select $where  OPTIONAL An SQL WHERE clause or Zend_Db_Table_Select object.
      * @param string|array                      $order  OPTIONAL An SQL ORDER clause.
      * @param int                               $offset OPTIONAL An SQL OFFSET value.
-     * @return PhpSlickGrid_Db_Table_Row|null The row results per the
+     * @return PHPSlickGrid_Db_Table_Row|null The row results per the
      *     Zend_Db_Adapter fetch mode, or null if no row found.
      */
     public function fetchRow($where = null, $order = null, $offset = null)
@@ -180,7 +140,7 @@ class PhpSlickGrid_Db_Table extends Zend_Db_Table_Abstract
     /**
      * Fetches a new blank row (not from the database).
      *
-     * @return PhpSlickGrid_Db_Table_Row_Abstract
+     * @return PHPSlickGrid_Db_Table_Row_Abstract
      * @deprecated since 0.9.3 - use createRow() instead.
      */
     public function fetchNew()

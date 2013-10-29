@@ -5,7 +5,7 @@ class Application_Model_DbTable_ProjectUser extends Zend_Db_Table_Abstract
 
     protected $_name = 'project_user';
     protected $_primary = 'project_usr_id';
-    protected $_rowsetClass = 'PhpSlickGrid_Db_Table_Rowset';
+    protected $_rowsetClass = 'PHPSlickGrid_Db_Table_Rowset';
 
     public function getSelectedTeamMembersByProjectId($project_id) {
     

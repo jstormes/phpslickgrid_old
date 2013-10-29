@@ -1,5 +1,5 @@
 <?php
-class PhpSlickGrid_Excel extends Zend_Db_Adapter_Abstract
+class PHPSlickGrid_Excel extends Zend_Db_Adapter_Abstract
 {
 	public $file;
 	
@@ -22,7 +22,21 @@ class PhpSlickGrid_Excel extends Zend_Db_Adapter_Abstract
     	$this->log        = Zend_Registry::get('log');
     	
     	$this->file=$file;
-    	$this->objPHPExcel = PHPExcel_IOFactory::load($file);
+    	//$this->objPHPExcel = PHPExcel_IOFactory::load($file);
+    	//$this->objPHPExcel->setReadDataOnly(true);
+    	
+    	
+    	
+    	$inputFileType = 'Excel2007';
+    	
+    	/**  Create a new Reader of the type defined in $inputFileType  **/
+    	$objReader = PHPExcel_IOFactory::createReader($inputFileType);
+    	/**  Advise the Reader that we only want to load cell data  **/
+    	$objReader->setReadDataOnly(true);
+
+    	/**  Load $inputFileName to a PHPExcel Object  **/
+    	$this->objPHPExcel = $objReader->load($file);
+    	 
     }
     
     public function ExcelFetchAllArray($tableName){
@@ -39,10 +53,13 @@ class PhpSlickGrid_Excel extends Zend_Db_Adapter_Abstract
     		$column_map[$s['EXCEL_COLUMN']]=$RealColumnName;
     	}
     	
+    	$idx=1;
     	foreach($data as $row=>$columns) {
-    		$ret[$row]=array();
-    		foreach($columns as $ExcelColumName=>$Value) {
-    			$ret[$row][$column_map[$ExcelColumName]]=$Value;
+    		if ($idx++!=1){
+	    		$ret[$row]=array();
+	    		foreach($columns as $ExcelColumName=>$Value) {
+	    			$ret[$row][$column_map[$ExcelColumName]]=$Value;
+	    		}
     		}
     	}
     	
@@ -75,8 +92,9 @@ class PhpSlickGrid_Excel extends Zend_Db_Adapter_Abstract
     	$worksheet = $this->objPHPExcel->getActiveSheet();
     	
     	//$this->log->debug($worksheet->get);
-    	
-    	$sheetData = $this->objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+    	//return;
+    	$sheet=$this->objPHPExcel->getActiveSheet();
+    	$sheetData = $sheet->toArray(null,true,true,true);
     	//$this->log->debug($sheetData);
     	
     	$columns = array();
@@ -108,24 +126,26 @@ class PhpSlickGrid_Excel extends Zend_Db_Adapter_Abstract
     	 * float, then decimal.  On the loader side allow smaller types to 
     	 * put into larger types without message.
     	 */
+    	$i=0;
     	foreach($sheetData as $idx=>$row) {
+//     		$i++;
+     		if ($i++>1000) break;
     		if (($idx!=1)||($this->firstRowNames==0)) {
 	    		foreach($columns as $column_name=>$column) {
 	    			$value=$row[$column['EXCEL_COLUMN']];
-	    			$type=$this->objPHPExcel
-	    				->getActiveSheet()
+	    			$type=$sheet
 	    				->getCell($column['EXCEL_COLUMN'].$idx)
 	    				->getDataType();
 	    			
 	    			// If type is numeric then check if type is datetime.
-	    			if ($type=='n') {
-	    				if (PHPExcel_Shared_Date::isDateTime(
-		    				$this->objPHPExcel
-		    				->getActiveSheet()
-		    				->getCell($column['EXCEL_COLUMN'].$idx)
-	    				))
-	    					$type='datetime';
-	    			}
+// 	    			if ($type=='n') {
+// 	    				if (PHPExcel_Shared_Date::isDateTime(
+// 		    				$this->objPHPExcel
+// 		    				->getActiveSheet()
+// 		    				->getCell($column['EXCEL_COLUMN'].$idx)
+// 	    				))
+// 	    					$type='datetime';
+// 	    			}
 	    				
 	    			
 	    			// set the types
@@ -144,6 +164,7 @@ class PhpSlickGrid_Excel extends Zend_Db_Adapter_Abstract
 	    		}
     		}
     	}
+
     	
     	//TODO: add integer types and numeric sizes!!!!!
     	// Convert Excel types to SQL types

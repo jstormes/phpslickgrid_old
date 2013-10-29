@@ -34,7 +34,7 @@ require_once 'Zend/Db/Table/Rowset/Abstract.php';
  * @copyright  Copyright (c) 2013 James Stormes (http://www.stormes.net)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class PhpSlickGrid_Db_Table_Rowset extends Zend_Db_Table_Rowset_Abstract
+class PHPSlickGrid_Db_Table_Rowset extends Zend_Db_Table_Rowset_Abstract
 {
 	
 	/**

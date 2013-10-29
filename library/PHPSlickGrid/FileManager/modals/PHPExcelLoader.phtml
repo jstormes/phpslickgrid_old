@@ -16,7 +16,8 @@
 	aria-labelledby='myModalLabel' aria-hidden='true'>
 	<div class='modal-dialog'>
 		<div class='modal-content'>
-			<form method='post' enctype='multipart/form-data'>
+			<form method='post' name="testmod" enctype='multipart/form-data'
+			onsubmit='return testmod_on_submit()'>
 
 				<div class='modal-header'>
 					<button type='button' class='close' data-dismiss='modal'
@@ -111,6 +112,17 @@
 	<!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+<div class="modal" id="pleaseWaitDialog" role='dialog' aria-labelledby='myModalLabel2' aria-hidden='true'>
+	<div class='modal-dialog'>
+		<div class='modal-content'>
+			<div class="modal-header">
+				<h1>Processing...</h1>
+			</div>
+			<div class="modal-body">Depending on the size of the data this may take some time. <br /><br />Please Wait.</div>
+		</div>
+	</div>
+</div>
+
 <script>
 
 var SourceSchema = <?php echo $this->SourceSchema; ?>;
@@ -129,5 +141,13 @@ function updateStatus(source_column,dest_column) {
 	}
 	document.getElementById(source_column).innerHTML=msg;
 }
+
+
+function testmod_on_submit() {
+    
+    $('#testmod').modal('hide');
+    $('#pleaseWaitDialog').modal();
+	  return true;
+	}
 </script>
 <!-- End Modal Upload -->

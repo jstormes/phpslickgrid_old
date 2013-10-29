@@ -11,7 +11,7 @@ class Application_Model_Shared_App extends Zend_Db_Table_Abstract
      * 
      * @var string
      */
-    protected $_rowsetClass = 'PhpSlickGrid_Db_Table_Rowset';
+    protected $_rowsetClass = 'PHPSlickGrid_Db_Table_Rowset';
     
     protected $_referenceMap    = array(
     		'user_app_role' => array(

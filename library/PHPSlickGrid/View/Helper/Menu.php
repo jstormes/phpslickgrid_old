@@ -17,7 +17,7 @@
  *
  * @author Michael Moussa <michael.moussa@gmail.com>
  */
-class PhpSlickGrid_View_Helper_Menu extends Zend_View_Helper_Navigation_Menu
+class PHPSlickGrid_View_Helper_Menu extends Zend_View_Helper_Navigation_Menu
 {
     /**
      * Intercept renderMenu() call and apply custom Twitter Bootstrap class/id

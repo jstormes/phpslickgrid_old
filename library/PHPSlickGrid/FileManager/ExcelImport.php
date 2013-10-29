@@ -1,7 +1,7 @@
 <?php
 
 
-class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abstract
+class PHPSlickGrid_FileManager_ExcelImport extends PHPSlickGrid_FileManager_Abstract
 {
 	
 	/** @var Zend_Layout */
@@ -27,18 +27,24 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 	
 	public $source_table_idx = null;
 	
+	public $project_id = null;
+	
 	/**
 	 * 
 	 *
 	 * By: jstormes Oct 23, 2013
 	 *
 	 * @param unknown $name
-	 * @param PhpSlickGrid_Db_Table $destination
+	 * @param PHPSlickGrid_Db_Table $destination
 	 * @param unknown $options
 	 */
-	public function __construct($name, $destination, $options){
+	public function __construct($name, $destination, $project_id, $options){
+		
+		$this->project_id = $project_id;
 		
 		$this->log = Zend_Registry::get('log');
+		
+		$this->log->debug("Const");
 		
 		$this->destTable=$destination;
 		
@@ -114,12 +120,15 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 		switch ($step) {
 			case 0:
 				$this->ModalUpload();
+				$this->log->debug("step0");
 				break;
 			case 1:
 				$this->MapData();
+				$this->log->debug("step1");
 				break;
 			case 2: 
 				$this->LoadData();
+				$this->log->debug("step2");
 				break;
 		}		
 	}
@@ -153,7 +162,7 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 		 * view from the controller.  
 		 */
 		$this->modalView = new Zend_View();
-		$this->modalView->setScriptPath( APPLICATION_PATH . '/../library/PhpSlickGrid/FileManager/modals/' );
+		$this->modalView->setScriptPath( APPLICATION_PATH . '/../library/PHPSlickGrid/FileManager/modals/' );
 		
 		/* Calculate the maximum possible upload size from the *.ini setting */
 		$upload_max_filesize 			= $this->return_bytes(ini_get('upload_max_filesize'));
@@ -180,10 +189,10 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 		 * view from the controller.
 		*/
 		$this->modalView = new Zend_View();
-		$this->modalView->setScriptPath( APPLICATION_PATH . '/../library/PhpSlickGrid/FileManager/modals/' );
+		$this->modalView->setScriptPath( APPLICATION_PATH . '/../library/PHPSlickGrid/FileManager/modals/' );
 		
 		/* Database adaptor like Excel file */
-		$Excel = new PhpSlickGrid_Excel($this->file_meta['tmp_name']);
+		$Excel = new PHPSlickGrid_Excel($this->file_meta['tmp_name']);
 		
 		// recover the selected source table if set
 		if (isset($_POST['source_table_idx'])) {
@@ -269,7 +278,7 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 		 * view from the controller.
 		*/
 		$this->modalView = new Zend_View();
-		$this->modalView->setScriptPath( APPLICATION_PATH . '/../library/PhpSlickGrid/FileManager/modals/' );
+		$this->modalView->setScriptPath( APPLICATION_PATH . '/../library/PHPSlickGrid/FileManager/modals/' );
 		
 		$log="";
 		
@@ -284,7 +293,7 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
 		
 		// Loop over source records
 		/* Database adaptor like Excel file */
-		$Excel = new PhpSlickGrid_Excel($this->file_meta['tmp_name']);
+		$Excel = new PHPSlickGrid_Excel($this->file_meta['tmp_name']);
 		if (isset($_POST['firstRowNames'])) {
 			if ($_POST['firstRowNames']==0)
 				$Excel->firstRowNames=0;
@@ -304,6 +313,7 @@ class PhpSlickGrid_FileManager_ExcelImport extends PhpSlickGrid_FileManager_Abst
  			}	
  			try {
  				// Attempt insert
+ 				$NewRow->project_id=$this->project_id;
  				$NewRow->save();
  			}
  			catch (Exception $Ex) {
