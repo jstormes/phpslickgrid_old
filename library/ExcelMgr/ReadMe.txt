@@ -9,3 +9,6 @@ the load should go allow faster.
 
 http://stackoverflow.com/questions/45953/php-execute-a-background-process
 
+
+/ExcelMgr/ViewMgr
+/ExcelMgr/Background
