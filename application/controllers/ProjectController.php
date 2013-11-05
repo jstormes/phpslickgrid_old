@@ -30,7 +30,7 @@ class ProjectController extends Zend_Controller_Action
         // action body   
     	$gridTable = new Application_Model_DbTable_Grid();
     	
-    	$ImportFile = new PHPSlickGrid_FileManager_ExcelImport("TestUpload", $gridTable, $this->project_id,
+    	$ImportFile = new ExcelMgr_View_ImportExcel("TestUpload", $gridTable, $this->project_id,
 			array("HTML"=>"<i class='icon-upload icon-large'></i>",
     		"Help"=>"Select Excel file to upload."
     		));
