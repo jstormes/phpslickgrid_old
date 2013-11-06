@@ -32,6 +32,7 @@ class ExcelMgr_ExcelToTable
 	}
 	
 	function load() {
+		$this->log->info("Starting Load Batch ".$this->batch_id.".");
 		
 		$LogTable = new ExcelMgr_Models_ExcelMgrLog();
 		
@@ -61,7 +62,7 @@ class ExcelMgr_ExcelToTable
 		
 		$map=$this->map;
 		
-		$this->log->debug($map);
+		$this->log->info(print_r($map,true));
 		
 		$error_cnt = 0;
 		
@@ -69,15 +70,19 @@ class ExcelMgr_ExcelToTable
 			$NewRow=$this->destTable->fetchNew();
 			foreach($Columns as $SourceColumnName=>$Value) {
 				if ($map[$SourceColumnName]!='ignore') {
-					$NewRow->$map[$SourceColumnName]=$Value;
+					$this->log->info("Copying Column: ".$map[$SourceColumnName]);
+					$NewRow->$map[$SourceColumnName]=$dbAdapter->quote($Value);
+					
 				}
 			}
 			try {
 				// Attempt insert
+				$this->log->info("Writing Row");
 				$NewRow->project_id=$this->project_id;
 				$NewRow->excel_mgr_batch_id=$this->batch_id;
 				$NewRow->deleted=1;
-				$NewRow->save();
+				$id=$NewRow->save();
+				$this->log->info("Row $id written.");
 			}
 			catch (Exception $Ex) {
 				// Catch errors
