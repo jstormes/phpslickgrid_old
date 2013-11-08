@@ -111,7 +111,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		// Add user_id to the logged events
 		$this->log->setEventItem('user_id', 0);
 		// Add the URI to the logged events
-		$this->log->setEventItem('request_uri', $_SERVER["REQUEST_URI"]);
+		if (PHP_SAPI != 'cli') 
+			$this->log->setEventItem('request_uri', $_SERVER["REQUEST_URI"]);
+		else
+			$this->log->setEventItem('request_uri', 'command line');
 		 
 		$writer_db = new Zend_Log_Writer_Db(Zend_Registry::get('db'), 'log');
 		$this->log->addWriter($writer_db);
@@ -215,11 +218,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	 * the user will be "logged on".
 	 ***********************************************************************/
 	protected function _initAuthServer() {
-		// If we have a login server use it to login else use our current server
-		if (isset($this->config->login_server))
-			$this->AuthServer = $this->config->login_server;
-		else
-			$this->AuthServer = $_SERVER["HTTP_HOST"];
+		
+		if (PHP_SAPI != 'cli') {
+			// If we have a login server use it to login else use our current server
+			if (isset($this->config->login_server))
+				$this->AuthServer = $this->config->login_server;
+			else
+				$this->AuthServer = $_SERVER["HTTP_HOST"];
+		}
 		
 		$this->LogInOutURL = "//".$this->AuthServer."/login";
 		$this->ProfileURL  = "//".$this->AuthServer."/login/reset"; // for now we just reset password.
@@ -261,8 +267,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 		// If we are command line attempt to use the command line user from 
 		// the config file.
 		if (PHP_SAPI == 'cli') {
-			if (isset($config->command_line_user))
-				$UserRow = $user_model->find($config->command_line_user)->current();
+			if (isset($this->config->command_line_user))
+				$UserRow = $user_model->find($this->config->command_line_user)->current();
+			else {
+				echo "\n\nNo Command line user set.\n\n";
+				Zend_Registry::get('log')->emerg("Called from command line with no command line user set.");
+				exit();
+			} 
+				
 		}
 	
 		// See if the user is logged in via cookies
@@ -426,6 +438,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	 * Build the Application menu.
 	 *********************************************************************/
 	protected function _initAppMenu() {
+		
+		if (PHP_SAPI == 'cli')
+			return;
+		
 		if ($this->user) {
 			$user_app_role_model = new Application_Model_Shared_UserAppRole();
 			$app_model = new Application_Model_Shared_App();
@@ -451,6 +467,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 	 * Build the menu.
 	 **********************************************************************/
 	protected function _initNavigation() {
+		
+		if (PHP_SAPI == 'cli')
+			return;
+		
 		if ($this->user) {
 			 
 			// Add menu as a resource to the acl
