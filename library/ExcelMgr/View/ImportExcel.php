@@ -25,8 +25,8 @@ class ExcelMgr_View_ImportExcel
 		/* Set our defaults */
 		$_defaults = array(
 				'HTML'=>'Upload',
-				'Title'=>'Upload File',
-				'Help'=>'Select the file to upload.'
+				'Title'=>'Load Table',
+				'Help'=>'Select file to upload:'
 		);
 		
 		/* Merge our defaults with the options passed in */
@@ -98,6 +98,17 @@ class ExcelMgr_View_ImportExcel
 		if (isset($_POST['Load']))
 			$step=2;
 		
+		if (isset($_GET['batchtablehistory']))
+			$step=3;
+		
+		if (isset($_GET['loadhistory']))
+			$step=4;
+		
+		if (isset($_GET['batch_id'])) {
+			if (!empty($_GET['batch_id']))
+				$step=5;
+		}
+		
 		$this->ModalUpload();
 		switch ($step) {
 			case 0:
@@ -110,6 +121,12 @@ class ExcelMgr_View_ImportExcel
 			case 2:
 				$this->LoadData();
 				$this->log->debug("step2");
+				break;
+			case 3:
+				$this->ListBatchHistory();
+				break;
+			case 5:
+				$this->ModalLogView();
 				break;
 		}
 		
@@ -129,7 +146,61 @@ class ExcelMgr_View_ImportExcel
 		$HTML  = $this->options['HTML'];
 	
 		/* Return the templated string */
-		return "<a href='#$name' role='button' data-toggle='modal' title='$Title'>$HTML</a>";
+		return "<a href='#$name' id='{$name}Button' role='button' data-toggle='modal' title='$Title'>$HTML</a>";
+	}
+	
+	public function ListBatchHistory() {
+		
+		$this->layout->disableLayout();
+		
+		$modalView = new Zend_View();
+		$modalView->setScriptPath( APPLICATION_PATH . '/../library/ExcelMgr/View/modals/' );
+		
+		/**  Show history for this table's loads  **/
+		$Batch = new ExcelMgr_Models_ExcelMgrBatch();
+		$sel = $Batch->select();
+		$sel->where("project_id = ?", $this->project_id);
+		$sel->where("table_name = ?", $this->table_name);
+		$sel->order('updt_dtm desc');
+		$batch_history = $Batch->fetchAll($sel);
+		
+		// Search for any process that has crashed.
+		foreach($batch_history as $record) {
+			if (($record->status != 'Done')&&($record->status != 'Crashed')) {
+				if (!$this->daemonIsRunning($record->pid)) {
+					$record->status = "Crashed";
+					$record->save();
+				}
+			}
+		}
+		
+		$modalView->name = $this->name;
+		
+		$modalView->batch_history=$batch_history->toArray();
+		
+		
+		
+		echo $modalView->render('BatchHistoryTable.phtml');
+		
+		exit();
+	}
+	
+	public function ModalLogView() {
+		/* Create modal by using the Zend_View similar to using the
+		 * view from the controller.
+		*/
+		$modalView = new Zend_View();
+		$modalView->setScriptPath( APPLICATION_PATH . '/../library/ExcelMgr/View/modals/' );
+		
+		$batch_id = $_GET['batch_id'];
+		
+		$Batch = new ExcelMgr_Models_ExcelMgrBatch();
+		
+		$record=$Batch->find($batch_id)->current();
+		
+		$modalView->record=$record;
+		
+		$this->layout->modals .= $modalView->render('LoadLog.phtml');
 	}
 	
 	/**
@@ -154,7 +225,15 @@ class ExcelMgr_View_ImportExcel
 		$modalView->name=$this->name;
 		$modalView->Title=$this->options['Title'];
 		$modalView->Help=$this->options['Help'];
-	
+		
+		/**  Show history for this table's loads  **/
+		$Batch = new ExcelMgr_Models_ExcelMgrBatch();
+		$sel = $Batch->select();
+		$sel->where("project_id = ?", $this->project_id);
+		$sel->where("table_name = ?", $this->table_name);
+		$sel->order('updt_dtm desc');
+		$batch_history = $Batch->fetchAll($sel);
+			
 		$this->layout->modals .= $modalView->render('ModalUpload.phtml');
 	}
 	
@@ -292,12 +371,11 @@ class ExcelMgr_View_ImportExcel
 		$Batch_Row->tab 		= $_POST['worksheet_idx'];
 		$Batch_Row->map 		= json_encode($_POST['mapping']);
 		$Batch_Row->table_name 	= $this->destTable->info('name');
+		$Batch_Row->log_file    = tempnam ( sys_get_temp_dir() , "PHPlog" );
 		
 		$Batch_id=$Batch_Row->save();
 		
-		$tmp_name = tempnam ( sys_get_temp_dir() , "PHPlog" );
-		
-		$this->run("../library/ExcelMgr/Scripts/ExcelToTable.php ".$Batch_id,$tmp_name);
+		$this->run("../library/ExcelMgr/Scripts/ExcelToTable.php ".$Batch_id,$Batch_Row->log_file);
 		
 		for($i=0;$i<5;$i++) {
 			sleep(1);
@@ -305,7 +383,7 @@ class ExcelMgr_View_ImportExcel
 				break;
 		}
 				
-		$modalView->log = file_get_contents($tmp_name);
+		$modalView->log = file_get_contents($Batch_Row->log_file);
 		
 		$this->layout->modals .= $modalView->render('LoadData.phtml');
 		

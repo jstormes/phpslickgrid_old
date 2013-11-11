@@ -30,12 +30,6 @@ else {
 
 date_default_timezone_set('America/Chicago');
 
-/** Set application path  **/
-//define('APPLICATION_PATH', '../../../application');
-
-/** Set path to library directory  **/
-//set_include_path(get_include_path() . PATH_SEPARATOR . "../..");
-
 /**  Setup autoloader  **/
 require_once 'Zend/Loader/Autoloader.php';
 $loader = Zend_Loader_Autoloader::getInstance();
