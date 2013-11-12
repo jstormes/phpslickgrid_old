@@ -21,7 +21,8 @@
 		  							<td><?php echo $record['file_name']?></td>
 		  							<td>
 		  								<?php if (file_exists($record['log_file'])) {?>
-		  									<a href="<?php echo $current_url."?batch_id=".$record['excel_mgr_batch_id']; ?>">
+		  									<a href="#"
+		  									onclick="$('#batch_id').val('<?php echo $record['excel_mgr_batch_id']; ?>');$(this).closest('form').submit();">
 		  										<?php echo $record['status']?>
 	  										</a>
 		  								<?php } else { ?>

@@ -75,6 +75,7 @@ try {
 	$Batch_Row->status="Done";
 	$Batch_Row->pid = null;
 	$Batch_Row->save();
+	echo "\nDone\n";
 }
 catch (Exception $Ex) {
 	$Batch_Row->status="Failed: ".$Ex->getMessage();

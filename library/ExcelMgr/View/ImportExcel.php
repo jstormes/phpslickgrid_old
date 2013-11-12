@@ -44,25 +44,7 @@ class ExcelMgr_View_ImportExcel
 		$this->Controller();
 	}
 	
-	/**
-	 * Controller Drives the modal views.
-	 *
-	 * By: jstormes Nov 7, 2013
-	 *
-	 */
-	public function Controller() {
-		/*
-		 * Figure out what step in the load we are on:
-		*
-		* 0 - Not really a step waiting on a file
-		* 1 - Mapping the input columns to the destination columns
-		* 2 - File is being processed
-		*/
-		$step = 0;
-		
-		/* if we have am uploaded file from the this instance
-		 * of the class, check for error and process it.
-		*/
+	public function ProcessFile() {
 		if (isset($_FILES[$this->name])) {
 			if ($_FILES[$this->name]["error"] > 0)
 			{
@@ -85,6 +67,41 @@ class ExcelMgr_View_ImportExcel
 				$step=1;
 			}
 		}
+	}
+	
+	
+	
+	/**
+	 * Controller Drives the modal views.
+	 *
+	 * By: jstormes Nov 7, 2013
+	 *
+	 */
+	public function Controller() {
+		
+		/** TODO: This logic SUCKS, fix it!!! js  ***/
+		
+		
+		/*
+		 * Figure out what step in the load we are on:
+		*
+		* 0 - Not really a step waiting on a file
+		* 1 - Mapping the input columns to the destination columns
+		* 2 - File is being processed
+		*/
+		$step = 0;
+		
+		/* if we have am uploaded file from the this instance
+		 * of the class, check for error and process it.
+		*/
+		if (isset($_FILES[$this->name])) {
+			if (!empty($_FILES[$this->name]['name'])) {
+				//$this->log->debug($_FILES);
+				$step=1;
+				$this->ProcessFile();
+			}
+		}
+		
 		
 		/*******************************************************************
 		 * If we have "load" post from step 0 then check for errors and
@@ -93,6 +110,7 @@ class ExcelMgr_View_ImportExcel
 		if (isset($_POST[$this->name.'-step1'])) {
 			$step=1;
 			$this->file_meta = $_POST['file_meta'];
+			
 		}
 		
 		if (isset($_POST['Load']))
@@ -104,8 +122,8 @@ class ExcelMgr_View_ImportExcel
 		if (isset($_GET['loadhistory']))
 			$step=4;
 		
-		if (isset($_GET['batch_id'])) {
-			if (!empty($_GET['batch_id']))
+		if (isset($_POST['batch_id'])) {
+			if (!empty($_POST['batch_id']))
 				$step=5;
 		}
 		
@@ -192,7 +210,7 @@ class ExcelMgr_View_ImportExcel
 		$modalView = new Zend_View();
 		$modalView->setScriptPath( APPLICATION_PATH . '/../library/ExcelMgr/View/modals/' );
 		
-		$batch_id = $_GET['batch_id'];
+		$batch_id = $_POST['batch_id'];
 		
 		$Batch = new ExcelMgr_Models_ExcelMgrBatch();
 		
@@ -325,6 +343,8 @@ class ExcelMgr_View_ImportExcel
 		
 		/**  Get dimension of the worksheet  **/
 		$worksheetInfo = $objReader->listWorksheetInfo($this->file_meta['tmp_name']);
+		$this->log->debug($worksheetInfo);
+		
 		$LastColumn = $worksheetInfo[$worksheet_idx]['lastColumnLetter'];
 		
 		$objReader->setLoadSheetsOnly($worksheetNames[$worksheet_idx]);
