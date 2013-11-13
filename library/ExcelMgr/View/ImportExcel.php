@@ -392,6 +392,7 @@ class ExcelMgr_View_ImportExcel
 		$Batch_Row->map 		= json_encode($_POST['mapping']);
 		$Batch_Row->table_name 	= $this->destTable->info('name');
 		$Batch_Row->log_file    = tempnam ( sys_get_temp_dir() , "PHPlog" );
+		$Batch_Row->first_row_names    = $_POST['firstRowNames'];
 		
 		$Batch_id=$Batch_Row->save();
 		

@@ -22,17 +22,18 @@ class ExcelMgr_ExcelToTable
 		$this->tab        = $this->Batch_Row->tab;
 		$this->table_name = $this->Batch_Row->table_name;
 		$this->project_id = $this->Batch_Row->project_id;
+		$this->first_row_names = $this->Batch_Row->first_row_names;
 		
 		$this->map        = json_decode($this->Batch_Row->map,true);
 		
 		$this->log->debug($this->batch_id);
 		$this->log->debug($this->Batch_Row);
-		
+		print_r($this->map);
 		
 	}
 	
 	
-	function load2() {
+	function load() {
 		$this->log->info("Starting Load Batch ".$this->batch_id.".");
 		
 		$LogTable = new ExcelMgr_Models_ExcelMgrLog();
@@ -66,16 +67,66 @@ class ExcelMgr_ExcelToTable
 		/**  Tell the Reader that we want to use the Read Filter  **/
 		$objReader->setReadFilter($chunkFilter);
 		
+		$BlockSize=10;
 		
-		/**  Starting at row 1 read 1 row  **/
-		$chunkFilter->setRows(1,1);
-		$objPHPExcel = $objReader->load($this->tmp_name);
-		$sheetData = $objPHPExcel->getActiveSheet()->rangeToArray("A1:{$LastColumn}1",null,true,true,true);
-		$columns = $sheetData[1];
+		$map=$this->map;
+		
+		$error_cnt = 0;
+		for($i=0;$i<=$TotalRows%$BlockSize;$i++) {
+			$rows = 10;
+			$blockStart = $BlockSize*$i;
+			if ($blockStart==0) {
+				if ($this->first_row_names==1)
+					$blockStart=2;
+				else
+					$blockStart=1; 
+			}
+				
+			$blockEnd = ($blockStart+$BlockSize)-1;
+			if ($blockEnd>$TotalRows)
+				$blockEnd=$TotalRows;  
+			$chunkFilter->setRows($BlockSize*$i,$BlockSize);
+			$objPHPExcel = $objReader->load($this->tmp_name);
+			$sheetData = $objPHPExcel->getActiveSheet()->rangeToArray("A{$blockStart}:{$LastColumn}{$blockEnd}",null,true,true,true);
+			//$columns = $sheetData[1];
+			//echo "\n\n\n****************************************\n";
+			//echo $BlockSize*$i."\n";
+			//print_r($sheetData);
+			
+			foreach($sheetData as $Row=>$Columns){
+				print_r($map,true);
+				$NewRow=$this->destTable->fetchNew();
+				foreach($Columns as $SourceColumnName=>$Value) {
+					if ($map[$SourceColumnName]!='ignore') {
+						//$this->log->info("Copying Column: ".$map[$SourceColumnName]);
+						$NewRow->$map[$SourceColumnName]=$dbAdapter->quote($Value);
+				
+					}
+				}
+				try {
+					// Attempt insert
+					$this->log->info("Writing Row");
+					$NewRow->project_id=$this->project_id;
+					$NewRow->excel_mgr_batch_id=$this->batch_id;
+					$NewRow->deleted=1;
+					$id=$NewRow->save();
+					//$this->log->info("Row $id written.");
+				}
+				catch (Exception $Ex) {
+					// Catch errors
+					$error_cnt++;
+					echo "Error on row {$Row}, ".$Ex->getMessage();
+					$log_row = $LogTable->createRow();
+					$log_row->excel_mgr_batch_id = $this->batch_id;
+					$log_row->row = json_encode($Columns);
+					$log_row->msg = $Ex->getMessage();
+				}
+			}
+		}
 	}
 	
 	
-	function load() {
+	function load2() {
 		$this->log->info("Starting Load Batch ".$this->batch_id.".");
 		
 		$LogTable = new ExcelMgr_Models_ExcelMgrLog();
@@ -110,7 +161,7 @@ class ExcelMgr_ExcelToTable
 		
 		$error_cnt = 0;
 		
-		for ($startRow = 2; $startRow <= 240; $startRow += $chunkSize) {
+		//for ($startRow = 2; $startRow <= 240; $startRow += $chunkSize) {
 			foreach($SourceData as $Row=>$Columns){
 				$NewRow=$this->destTable->fetchNew();
 				foreach($Columns as $SourceColumnName=>$Value) {
@@ -139,7 +190,7 @@ class ExcelMgr_ExcelToTable
 					$log_row->msg = $Ex->getMessage();
 				}
 			}
-		}
+		//}
 		
 		if ($error_cnt==0) {
 			$data = array('deleted' => 0);
