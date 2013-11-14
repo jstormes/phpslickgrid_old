@@ -3,11 +3,13 @@
 class ExcelMgr_ExcelToTable
 {
 	
+	
 	/** @var Zend_Db_Table */
 	public $Batch_Row;
 	
 	
 	public function __construct($batch_id) {
+		ini_set('memory_limit', '4G');
 		
 		$this->log = Zend_Registry::get('log');
 		
@@ -61,18 +63,24 @@ class ExcelMgr_ExcelToTable
 		$LastColumn = $worksheetInfo[$this->tab]['lastColumnLetter'];
 		
 		$objReader->setLoadSheetsOnly($worksheetNames[$this->tab]);
+		$objReader->setReadDataOnly(true); /* this */
 		
 		/**  Create a new Instance of our Read Filter  **/
 		$chunkFilter = new ExcelMgr_chunkReadFilter();
 		/**  Tell the Reader that we want to use the Read Filter  **/
 		$objReader->setReadFilter($chunkFilter);
 		
-		$BlockSize=10;
+		$BlockSize=250;
 		
 		$map=$this->map;
+		echo "Ttoal Rows ".$TotalRows."\n";
+		echo "Block Size ".$BlockSize."\n";
 		
+		$BlockCount = round($TotalRows/$BlockSize+0.5);
+		echo "Block count ". $BlockCount . "\n";
 		$error_cnt = 0;
-		for($i=0;$i<=$TotalRows%$BlockSize;$i++) {
+		for($i=0;$i<=$BlockCount;$i++) {
+			
 			$rows = 10;
 			$blockStart = $BlockSize*$i;
 			if ($blockStart==0) {
@@ -87,11 +95,15 @@ class ExcelMgr_ExcelToTable
 				$blockEnd=$TotalRows;  
 			$chunkFilter->setRows($BlockSize*$i,$BlockSize);
 			$objPHPExcel = $objReader->load($this->tmp_name);
-			$sheetData = $objPHPExcel->getActiveSheet()->rangeToArray("A{$blockStart}:{$LastColumn}{$blockEnd}",null,true,true,true);
+			$sheetData = $objPHPExcel->getActiveSheet()->rangeToArray("A{$blockStart}:{$LastColumn}{$blockEnd}",null,false,false,true);
 			//$columns = $sheetData[1];
 			//echo "\n\n\n****************************************\n";
 			//echo $BlockSize*$i."\n";
 			//print_r($sheetData);
+			$this->Batch_Row->status="{$blockStart}/{$TotalRows}";
+			$this->Batch_Row->save();
+			echo "{$blockStart}/{$TotalRows}\n";
+			//sleep(1);
 			
 			foreach($sheetData as $Row=>$Columns){
 				print_r($map,true);
@@ -111,6 +123,7 @@ class ExcelMgr_ExcelToTable
 					$NewRow->deleted=1;
 					$id=$NewRow->save();
 					//$this->log->info("Row $id written.");
+					
 				}
 				catch (Exception $Ex) {
 					// Catch errors
@@ -121,7 +134,12 @@ class ExcelMgr_ExcelToTable
 					$log_row->row = json_encode($Columns);
 					$log_row->msg = $Ex->getMessage();
 				}
+				unset($NewRow);
+				gc_collect_cycles();
 			}
+			$objPHPExcel->disconnectWorksheets();
+			unset($objPHPExcel);
+			unset($sheetData);
 		}
 	}
 	
