@@ -54,7 +54,7 @@ function watermark($wm) { if ($wm) return "style=\"background-image: url('$wm');
 </div>
 
 
-<div class="navbar navbar-default navbar-static-top">
+<div class="navbar navbar-default navbar-static-top" >
 	<div class="navbar-header" <?php echo watermark($this->watermark); ?>>
 		<button type="button" class="navbar-toggle" data-toggle="collapse"
 			data-target=".navbar-collapse">
@@ -64,7 +64,7 @@ function watermark($wm) { if ($wm) return "style=\"background-image: url('$wm');
 		<a class="navbar-brand" href="#"
 			><b><?php echo $this->title; ?></b></a>
 	</div>
-	<div class="navbar-collapse collapse">
+	<div class="navbar-collapse collapse" <?php //echo watermark($this->watermark); ?>>
 
 		<!-- Left Nav -->
 	<?php echo $this->navigation()->menu()->setUlClass('nav navbar-nav'); ?>

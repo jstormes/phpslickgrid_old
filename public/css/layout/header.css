@@ -27,6 +27,7 @@
 	margin-top: 0px;
 	border-color: rgb(231, 231, 231);
 	border-top: 1px solid rgb(231, 231, 231);
+	
 }
 
 .navbar-nav>li>a {
@@ -57,11 +58,11 @@
 		border: 1px solid transparent;
 	}
 	.navbar-nav>ul {
-		z-index: 1000;
+		/*z-index: 1000;*/
 		background: #ffffff;
 	}
 	.navbar-nav>li {
-		z-index: 1000;
+		/*z-index: 1000;*/
 		/*background: #ffffff;*/
 		/* this fixes transparent menu in small format but messes up med format*/
 	}
