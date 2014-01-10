@@ -1,6 +1,6 @@
 <?php
 
-class ProjectController extends Zend_Controller_Action
+class GapController extends Zend_Controller_Action
 {
 
     public function init()

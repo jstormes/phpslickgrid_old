@@ -1,0 +1,25 @@
+
+
+	<div id='leftgrid' style="overflow: auto; height:100%; float:left; width:40%;">
+		<?php echo $this->PHPSlickgrid("left1",null,$this->GridColumnConfiguration,$this->GridConfiguration); ?>
+	</div>
+	
+	<div id='center' style="overflow: auto; height:100%; width: 100px; float:left;">
+		<?php echo $this->PHPSlickgrid("center",null,$this->GridColumnConfiguration,$this->GridConfiguration); ?>
+	</div>
+ 
+	<div id='rightgrid' style="overflow: auto; height:100%;float:left; width: 40%;">
+		<?php echo $this->PHPSlickgrid("right1",null,$this->GridColumnConfiguration,$this->GridConfiguration); ?>
+	</div>
+	
+
+
+<script>
+var total_width = $( window ).width();
+var center_width = 100
+var left_width=((total_width-100)/2);
+var right_width=((total_width-100)/2)-(total_width-(center_width+left_width+((total_width-100)/2)));
+//console.log(width);
+$("#leftgrid").width(left_width);
+$("#rightgrid").width(right_width);
+</script>

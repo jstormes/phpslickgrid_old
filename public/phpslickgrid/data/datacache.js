@@ -39,8 +39,9 @@
 			      primay_col: null,
 			      blockSize: 100,
 			      bufferSize: 10,
-			      pollFrequency: 2500,    // 2.5 Seconds
+//			      pollFrequency: 2500,    // 2.5 Seconds
 //			      pollFrequency: 10000,    // 10 Seconds
+			      pollFrequency: 1000000,    // 10 Seconds
 			      gridName: 'grid',        // Used to tie back to Zend_Session.
 			      order_list: {},
 			      where_list: new Array()

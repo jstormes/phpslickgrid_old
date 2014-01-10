@@ -8,6 +8,9 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
     
     private $live_data=false;
     
+    private static $_files = array();
+    private static $_removed = array();
+    
     public function PHPSlickgrid($name, $value = null, $attribs = null, $options=null)
     {
         $this->name      = $name;
@@ -21,20 +24,30 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
          * Setup a session for this plugin
          */
         $this->session = new Zend_Session_Namespace($this->name);
+        $this->shared_session = new Zend_Session_Namespace("PHPSlickgrid_View_Helper_PHPSlickgrid");
         
-        /**
-         * Load all the css required for the core slickgrid style
-         */
-        $this->loadCss();
+        
+        
+        
         
         /**
          * Load all the javascript requird for the core slickgrid functionality
          */
-        //$this->removeScript('jquery');  /* Replace jquery with 1.7 */
-        //$this->view->headScript()->prependScript('/slickgrid/lib/jquery-1.7.min.js');
-        //$this->view->headScript()->appendFile('/slickgrid/lib/jquery-1.7.min.js');
-        $this->loadJS();
         
+        	/**
+        	 * Load all the css required for the core slickgrid style
+        	 */
+        	$this->loadCss();
+        	
+	        $this->removeScript('jquery');  /* Replace jquery with 1.7 */
+	        //$this->view->headScript()->prependScript('/slickgrid/lib/jquery-1.7.min.js');
+	        //$this->view->headScript()->appendFile('/slickgrid/lib/jquery-1.7.min.js');
+	        $this->loadJS();
+	        $this->shared_session->loaded=true;
+        	
+        
+	        
+	        
         /**
          * Give the GridColumnConfiguration a chance to update it's setting using the
          * data from the view.  IE, let it load meta data using the project_id and 
@@ -76,20 +89,24 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
      * @return boolean Returns TRUE, if the removal has been a success.
      */
     public function removeScript($src) {
-    	$headScriptContainer = Zend_View_Helper_Placeholder_Registry::getRegistry()
-    	->getContainer("Zend_View_Helper_HeadScript");
-    	$iter = $headScriptContainer->getIterator();
-    	$success = FALSE;
-    	foreach ($iter as $k => $value) {
-    		if(strpos($value->attributes["src"], $src) !== FALSE) {
-    			//$iter->offsetUnset($k);
-    			$value->attributes["src"]='/slickgrid/lib/jquery-1.7.min.js';
-    			$success = TRUE;
+    	
+    	if (!isset(self::$_removed[$src])) {
+    		self::$_removed[$src]=$src;
+    		
+    		$headScriptContainer = Zend_View_Helper_Placeholder_Registry::getRegistry()
+    		->getContainer("Zend_View_Helper_HeadScript");
+    		$iter = $headScriptContainer->getIterator();
+    		$success = FALSE;
+    		foreach ($iter as $k => $value) {
+    			if(strpos($value->attributes["src"], $src) !== FALSE) {
+    				unset($iter[$k]);
+    				$success = TRUE;
+    			}
     		}
+    		Zend_View_Helper_Placeholder_Registry::getRegistry()
+    		->setContainer("Zend_View_Helper_HeadScript",$headScriptContainer);
     	}
-    	Zend_View_Helper_Placeholder_Registry::getRegistry()
-    	->setContainer("Zend_View_Helper_HeadScript",$headScriptContainer);
-    	return $success;
+    	//return $success;
     }
     
     
@@ -423,36 +440,60 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         return $ReturnHTML;
     }
     
+    private function AppendCSSOnlyOnce($file) {
+    	if (!isset(self::$_files[$file])) {
+    		self::$_files[$file]=$file;
+    		$this->view->headLink()->appendStylesheet($file);
+    	}
+    }
+    
     private function loadCss() {
-        $this->view->headLink()->appendStylesheet('/slickgrid/slick.grid.css');
-        $this->view->headLink()->appendStylesheet('/slickgrid/css/smoothness/jquery-ui-1.8.16.custom.css');
-        $this->view->headLink()->appendStylesheet('/phpslickgrid/css/base.css');
-        $this->view->headLink()->appendStylesheet('/slickgrid/plugins/slick.checkboxselectcolumn.js');
+    	
+        $this->AppendCSSOnlyOnce('/slickgrid/slick.grid.css');
+        $this->AppendCSSOnlyOnce('/slickgrid/css/smoothness/jquery-ui-1.8.16.custom.css');
+        $this->AppendCSSOnlyOnce('/phpslickgrid/css/base.css');
+        $this->AppendCSSOnlyOnce('/slickgrid/plugins/slick.checkboxselectcolumn.js');
         
         foreach($this->options->plugins as $key=>$plugin) {
             foreach($plugin->CSS_Files as $file) {
-                $this->view->headLink()->appendStylesheet($file);
+                $this->AppendCSSOnlyOnce($file);
             }
         }
         
     }
     
+    private function PrependOnlyOnce($file) {
+    	if (!isset(self::$_files[$file])) {
+    		self::$_files[$file]=$file;
+    		$this->view->headScript()->prependFile($file);
+    	}
+    }
+    
+    private function AppendOnlyOnce($file) {
+    	if (!isset(self::$_files[$file])) {
+    		self::$_files[$file]=$file;
+    		$this->view->headScript()->appendFile($file);
+    	}
+    }
+    
     private function loadJS() {
         // Load the jQuery requried js files.
-//        $this->view->headScript()->prependFile('/slickgrid/lib/jquery-1.7.min.js');
-        $this->view->headScript()->appendFile('/js/json2.js');
-        $this->view->headScript()->appendFile('/js/jquery.zend.jsonrpc.js');
-        $this->view->headScript()->appendFile('/slickgrid/lib/jquery-ui-1.8.16.custom.min.js');
-        $this->view->headScript()->appendFile('/slickgrid/lib/jquery.event.drag-2.2.js');
+    	//$LoadCommmonJS = PHPSlickGrid_lib_JSLoadOnce::AddFile('/slickgrid/lib/jquery-1.7.min.js');
+    	$this->PrependOnlyOnce('/slickgrid/lib/jquery-1.7.min.js');
+        $this->AppendOnlyOnce('/js/json2.js');
+        $this->AppendOnlyOnce('/js/jquery.zend.jsonrpc.js');
+        $this->AppendOnlyOnce('/slickgrid/lib/jquery-ui-1.8.16.custom.min.js');
+        $this->AppendOnlyOnce('/slickgrid/lib/jquery.event.drag-2.2.js');
+        $this->AppendOnlyOnce('/slickgrid/lib/jquery.event.drop-2.2.js');
         
         // Load the Slickgrid required js files
-        $this->view->headScript()->appendFile('/slickgrid/slick.core.js');
-        $this->view->headScript()->appendFile('/slickgrid/plugins/slick.cellrangedecorator.js');
-        $this->view->headScript()->appendFile('/slickgrid/plugins/slick.cellrangeselector.js');
-        $this->view->headScript()->appendFile('/slickgrid/plugins/slick.cellselectionmodel.js');
+        $this->AppendOnlyOnce('/slickgrid/slick.core.js');
+        $this->AppendOnlyOnce('/slickgrid/plugins/slick.cellrangedecorator.js');
+        $this->AppendOnlyOnce('/slickgrid/plugins/slick.cellrangeselector.js');
+        $this->AppendOnlyOnce('/slickgrid/plugins/slick.cellselectionmodel.js');
         
         // Load the PHPSlickgrid required js files
-        $this->view->headScript()->appendFile('/phpslickgrid/data/datacache.js');
+        $this->AppendOnlyOnce('/phpslickgrid/data/datacache.js');
         //$this->view->headScript()->appendFile('/phpslick/powerfilter.js');
         //$this->view->headScript()->appendFile('/phpslick/powerfilter2.js');
 //        $this->view->headScript()->appendFile('/phpslick/headerdialog.js');
@@ -462,7 +503,7 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         
         foreach($this->options->plugins as $key=>$plugin) {      
             foreach($plugin->Javascript_File as $file) {
-                $this->view->headScript()->appendFile($file);
+                $this->AppendOnlyOnce($file);
             }
         }
         
@@ -470,9 +511,9 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         //$this->view->headScript()->appendFile('/phpslick/plugins/phpslick.checkboxselectcolumn.js');
         //$this->view->headScript()->appendFile('/phpslick/controls/phpslick.columnpicker.js');
         
-        $this->view->headScript()->appendFile('/slickgrid/slick.formatters.js');
-        $this->view->headScript()->appendFile('/slickgrid/slick.editors.js');
-        $this->view->headScript()->appendFile('/slickgrid/slick.grid.js');
+        $this->AppendOnlyOnce('/slickgrid/slick.formatters.js');
+        $this->AppendOnlyOnce('/slickgrid/slick.editors.js');
+        $this->AppendOnlyOnce('/slickgrid/slick.grid.js');
         
         //$this->view->headScript()->appendFile('/phpslick/editors/phpslick.editors.select.js');
         

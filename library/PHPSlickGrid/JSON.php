@@ -18,6 +18,8 @@ class PHPSlickGrid_JSON {
             }
         }
         
+        $this->classList = array();
+        
         $this->Config=$Config;
                 
         // Instantiate JSON RPC srver
@@ -36,6 +38,12 @@ class PHPSlickGrid_JSON {
 
     }
     
+    function add_class($Class) {
+    	if (is_object($Class))
+    		$this->classList[] = get_class($Class);
+    	else
+    		$this->classList[] = $Class;
+    }
     
     function handle() {
         
