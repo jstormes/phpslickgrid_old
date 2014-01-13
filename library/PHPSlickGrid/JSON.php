@@ -34,7 +34,7 @@ class PHPSlickGrid_JSON {
         //$this->server->setClass('PHPSlickGrid_JSON_DbTable2_ListFilter2');
         //$this->server->setClass('PHPSlickGrid_JSON_DbTable2_Meta');
         //$this->server->setClass('PHPSlickGrid_JSON_DbTable2_Options');
-        $this->server->setClass('PHPSlickGrid_JSON_DataCache');  //PHPSlickGrid_JSON_DbTable2_DataCache
+        $this->server->setClass('PHPSlickGrid_JSON_DataCacheJoin');  //PHPSlickGrid_JSON_DbTable2_DataCache
 
     }
     

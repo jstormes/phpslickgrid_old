@@ -237,7 +237,7 @@
 				            var block=Math.floor(idx/10);
 				            var blockIdx=idx%10;
 				            
-					            self.pages[block].data[blockIdx]=data[i];
+					            self.pages[block].data[self.options.table_name][blockIdx]=data[i];
 					           		            
 					            if (self.newestRecord<data[i][self.options.upd_dtm_col]) {
 					            	self.newestRecord=data[i][self.options.upd_dtm_col];			            	
@@ -281,22 +281,27 @@
 		        function success(block,data) {
 		            // Set Block of data
 		        	if (typeof self.pages[block] != 'undefined') {
-			            self.pages[block].data=data;
+		        		//if (typeof self.options.table_name != 'undefined') {
+		        		//	self.pages[block].data=data[self.options.table_name];
+		        		//}
+		        		//else {
+		        			self.pages[block].data=data;
+		        		//}
 			            
 			            // Create array of updated indices
 				        var indices = new Array();
-				        var len=self.pages[block].data.length;
+				        var len=self.pages[block].data[self.options.table_name].length;
 				        for (var i=0;i<len;i++) {
 				            indices[i]=(block*blockSize)+i;
 				            // Store the date time of the newest record, we use this later to see if 
 				            // we need to refresh the block, column must be named updt_dtm in the db.
-				            if (typeof self.pages[block].data[i][self.options.upd_dtm_col]!='undefined')
-				                if (self.pages[block].data[i][self.options.upd_dtm_col] > self.pages[block].updt_dtm) 
-				                    self.pages[block].updt_dtm = self.pages[block].data[i][self.options.upd_dtm_col];
+				            if (typeof self.pages[block].data[self.options.table_name][i][self.options.upd_dtm_col]!='undefined')
+				                if (self.pages[block].data[self.options.table_name][i][self.options.upd_dtm_col] > self.pages[block].updt_dtm) 
+				                    self.pages[block].updt_dtm = self.pages[block].data[self.options.table_name][i][self.options.upd_dtm_col];
 	
 				            // primay key mapping to indices
 				            var k_field=self.options.primay_col;
-				            self.reverseLookup["k"+self.pages[block].data[i][self.options.primay_col]]=(block*blockSize)+i;
+				            self.reverseLookup["k"+self.pages[block].data[self.options.table_name][i][self.options.primay_col]]=(block*blockSize)+i;
 				            //console.log("k"+self.pages[block].data[i][k_field]+" "+(block*blockSize)+i);
 				        }
 				        // Keep a record of the newest record we have seen
@@ -362,8 +367,10 @@
 		        
 		    
 		       	// return what we have.  If it was blank it will be 
-		       	// refreshed by the AJAX call.	        
-		        return self.pages[block].data[idx];        
+		       	// refreshed by the AJAX call.	  
+		        if (typeof self.pages[block].data[self.options.table_name] != 'undefined')
+		        	return self.pages[block].data[self.options.table_name][idx];    
+		        else return null;
 			}
 
 		    //function getItemMetadata(i) {
@@ -398,7 +405,7 @@
 					            var block=Math.floor(idx/10);
 					            var blockIdx=idx%10;
 					            
-					            self.pages[block].data[blockIdx]=data[i];
+					            self.pages[block].data[self.options.table_name][blockIdx]=data[i];
 					            
 					            if (self.newestRecord<data[i][self.options.upd_dtm_col]) {
 					            	self.newestRecord=data[i][self.options.upd_dtm_col];

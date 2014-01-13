@@ -1,25 +1,50 @@
+<style>
+    
+#leftgrid .slick-viewport {
+    overflow-y: hidden !important;
+}
 
+#linkgrid .slick-viewport {
+    overflow-y: hidden !important;
+}
+</style>
+
+<div id='phpslickgrid' style="height:100%;">
 
 	<div id='leftgrid' style="overflow: auto; height:100%; float:left; width:40%;">
-		<?php echo $this->PHPSlickgrid("left1",null,$this->GridColumnConfiguration,$this->GridConfiguration); ?>
+		<?php echo $this->PHPSlickgrid("leftgrid",null,$this->GridColumnConfiguration,$this->GridConfiguration); ?>
 	</div>
 	
-	<div id='center' style="overflow: auto; height:100%; width: 100px; float:left;">
-		<?php echo $this->PHPSlickgrid("center",null,$this->GridColumnConfiguration,$this->GridConfiguration); ?>
+	<div id='linkgrid' style="overflow: auto; height:100%; width: 100px; float:left;border-left:3px solid blue;border-right:3px solid blue;">
+		<?php echo $this->PHPSlickgrid("linkgrid",null,$this->GridColumnConfiguration,$this->GridConfiguration); ?>
 	</div>
  
 	<div id='rightgrid' style="overflow: auto; height:100%;float:left; width: 40%;">
-		<?php echo $this->PHPSlickgrid("right1",null,$this->GridColumnConfiguration,$this->GridConfiguration); ?>
+		<?php echo $this->PHPSlickgrid("rightgrid",null,$this->GridColumnConfiguration,$this->GridConfiguration); ?>
 	</div>
 	
-
+</div>
 
 <script>
 var total_width = $( window ).width();
 var center_width = 100
 var left_width=((total_width-100)/2);
-var right_width=((total_width-100)/2)-(total_width-(center_width+left_width+((total_width-100)/2)));
+var right_width=((total_width-100)/2)-(total_width-(center_width+left_width+((total_width-100)/2)))-3-3;
 //console.log(width);
 $("#leftgrid").width(left_width);
 $("#rightgrid").width(right_width);
+
+$('div.slick-viewport:last').css({"overflow-y" : 'auto !important'});
+
+
+
+rightgrid.onScroll.subscribe(function(e,args){
+    // console.log(e);
+    // console.log(args);
+	linkgrid.scrollPort(args.scrollTop);
+	leftgrid.scrollPort(args.scrollTop);
+});
+
+
+
 </script>

@@ -31,7 +31,7 @@ class GapController extends Zend_Controller_Action
         $this->GridConfiguration = new PHPSlickGrid_GridConfig();
         $this->GridConfiguration->DataModel 	= new Application_Model_DbTable_Grid();
         $this->GridConfiguration->project_id	= $this->project_id;
-        
+        $this->GridConfiguration->table_name	= 'grid';
         // This sets up our AJAX calls to use the rpcAction below.
         $this->GridConfiguration->jsonrpc              = $this->view->url(array('action'=>'rpc'));  // Our RPC URL is what we were passed replaing our action with rpc.
         // Set our project_id as a hard coded filter.
@@ -44,43 +44,31 @@ class GapController extends Zend_Controller_Action
     {
         // action body 
 
-    	if ($this->_request->getParam('rpc','false')=='true') {
-    		
-    		// Disable menus and don't render any view.
-    		$this->_helper->layout()->disableLayout(true);
-    		$this->_helper->viewRenderer->setNoRender(true);
-    		
-    		// Create a new instance of a JSON webservice service using our source table and grid configuration.
-    		$server = new PHPSlickGrid_JSON($this->GridConfiguration->DataModel,$this->GridConfiguration);
-    		
-    		// Expose the JSON database table service trough this action.
-    		$server->handle();
-    	}
-        else {
+
         	
-	    	/****************  Setup the Grid *******************/
-	    	// Pass the Grid Configuration to the view.
-	    	$this->view->GridConfiguration = $this->GridConfiguration;
-	    	
-	    	// Get our column configuration directly from the source table
-	    	$GridColumnConfiguration = new PHPSlickGrid_ColumnConfig($this->GridConfiguration->DataModel);
-	    	
-	    	// Hid any columns we don't want the user to see
-	    	$GridColumnConfiguration->Hidden = array('project_id','updt_dtm');
-	    	
-	    	// Set any columns we don't want the user to update
-	    	$GridColumnConfiguration->ReadOnly = array('');
-	    	
-	    	// Rename ColumnOptions - controls the Options for the individual columns.
-	    	$this->view->GridColumnConfiguration = $GridColumnConfiguration;
-	    	/*************  End Setup the Grid ******************/
-	    	
-	    	$ImportFile = new ExcelMgr_View_ImportExcel("TestUpload", $this->GridConfiguration->DataModel, $this->project_id,
-				array("HTML"=>"<i class='icon-upload icon-large'></i>",
-	    		"Help"=>"Select Excel file to upload."
-	    		));
-	    	$this->layout->footer_right=$ImportFile->Button();
-        }
+    	/****************  Setup the Grid *******************/
+    	// Pass the Grid Configuration to the view.
+    	$this->view->GridConfiguration = $this->GridConfiguration;
+    	
+    	// Get our column configuration directly from the source table
+    	$GridColumnConfiguration = new PHPSlickGrid_ColumnConfig($this->GridConfiguration->DataModel);
+    	
+    	// Hid any columns we don't want the user to see
+    	$GridColumnConfiguration->Hidden = array('project_id','updt_dtm');
+    	
+    	// Set any columns we don't want the user to update
+    	$GridColumnConfiguration->ReadOnly = array('');
+    	
+    	// Rename ColumnOptions - controls the Options for the individual columns.
+    	$this->view->GridColumnConfiguration = $GridColumnConfiguration;
+    	/*************  End Setup the Grid ******************/
+    	
+//     	$ImportFile = new ExcelMgr_View_ImportExcel("TestUpload", $this->GridConfiguration->DataModel, $this->project_id,
+// 			array("HTML"=>"<i class='icon-upload icon-large'></i>",
+//     		"Help"=>"Select Excel file to upload."
+//     		));
+//     	$this->layout->footer_right=$ImportFile->Button();
+
     	
     }
     
