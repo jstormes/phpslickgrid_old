@@ -6,6 +6,7 @@ class PHPSlickGrid_GridConfig {
     public $conditions = array();
     public $plugins    = array();
     public $staticFields = array(); 
+    public $join		= array();
 
     public function __set($name, $value)
     {
@@ -36,6 +37,16 @@ class PHPSlickGrid_GridConfig {
     public function __unset($name)
     {
         unset($this->data[$name]);
+    }
+    
+    public function JoinTo($join_to_table) {
+    	if (is_object($join_to_table)) {
+    		$this->join[] = get_class($join_to_table);
+    	}
+    	else {
+    		$this->join[] = $join_to_table;
+    	}
+    		
     }
 
 }

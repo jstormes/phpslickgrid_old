@@ -29,9 +29,14 @@ class GapController extends Zend_Controller_Action
         
         // Options will will use for the grid.
         $this->GridConfiguration = new PHPSlickGrid_GridConfig();
-        $this->GridConfiguration->DataModel 	= new Application_Model_DbTable_Grid();
+        $this->GridConfiguration->DataModel 	= new Application_Model_Grids_GridLink();
         $this->GridConfiguration->project_id	= $this->project_id;
-        $this->GridConfiguration->table_name	= 'grid';
+        $this->GridConfiguration->table_name	= 'grid_link';
+        //$this->GridConfiguration->join = array();
+        $this->GridConfiguration->JoinTo( new Application_Model_Grids_GridLeft() );
+        $this->GridConfiguration->JoinTo( new Application_Model_Grids_GridRight() );
+       // $t=new Application_Model_Grids_GridLeft();
+       // $t->
         // This sets up our AJAX calls to use the rpcAction below.
         $this->GridConfiguration->jsonrpc              = $this->view->url(array('action'=>'rpc'));  // Our RPC URL is what we were passed replaing our action with rpc.
         // Set our project_id as a hard coded filter.

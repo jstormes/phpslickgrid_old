@@ -1,6 +1,7 @@
 <?php
 class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 	
+	
 	/**
 	 * returns the number of data items in the set
 	 *
@@ -16,8 +17,8 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 			
 			$sel = $this->Table->select();
 			$sel->from(array($this->TableName),array('num'=>'COUNT(*)'));
-			$this->addConditionsToSelect($this->Config->conditions, $sel);
-			$this->createWhere($sel, $options['where_list']);
+			$this->addConditionsToSelect($this->TableName,$this->Config->conditions, $sel);
+			$this->createWhere($this->TableName,$sel, $options['where_list']);
 			$Res = $this->Table->fetchRow($sel);
 			return $Res->num;
 		}
@@ -43,23 +44,72 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 			$parameters=array_merge_recursive($options,$this->parameters);
 			//throw new Exception(print_r($parameters,true));
 	
+			$this->Table->getDefaultAdapter()->setFetchMode(Zend_Db::FETCH_NUM);
+			
 			$sel = $this->Table->select();
-			$sel->from(array($this->TableName => $this->TableName),array('*'));
-			$this->addConditionsToSelect($this->Config->conditions, $sel);
-			$this->createWhere($sel, $options['where_list']);
+			$sel->setIntegrityCheck(false);
+			
+			$columns = array();
+			
+			foreach($this->info['cols'] as $key=>$value) {
+				$columns[$this->TableName."$".$value]=$value;
+			}
+			
+			
+			$sel->from(array($this->TableName => $this->TableName),$columns);
+			$this->log->debug("parameters");
+			$this->log->debug($this->Config);
+			if (isset($this->Config->join)) {
+ 				foreach ($this->Config->join as $join_table) {
+ 					$join_grid = new $join_table(); 					
+ 					$info=$join_grid->info();
+ 					$JoinTableName = $info['name'];
+ 					
+ 					$PrimaryKey=array_shift($info['primary']);
+ 					$columns = array();
+ 					foreach($info['cols'] as $key=>$value) {
+ 						$columns[$JoinTableName."$".$value]=$value;
+ 					}
+ 					$sel->joinUsing($JoinTableName, $PrimaryKey, $columns);
+ 				}
+			}
+
+			$this->addConditionsToSelect($this->TableName,$this->Config->conditions, $sel);
+			$this->createWhere($this->TableName,$sel, $options['where_list']);
 			$sel->limit($options['blockSize'],$block*$options['blockSize']);
 	
 			// Build our order by
 			foreach($parameters['order_list'] as $orderby) {
 				$sel->order($orderby);
 			}
-	
-			$Results = $this->Table->fetchAll($sel);
-			if ($Results) {
-				$ret = array();
-				$ret[$this->TableName]=$Results->toArray();
-				return ($ret);
-			}
+			
+
+			$Results = $this->Table->fetchAll($sel)->toArray();
+			
+			$this->log->debug("Results");
+			$this->log->debug($Results);
+			
+			
+			$ret = array();
+			//$ret[$table] = array();
+				
+			foreach($Results as $idx=>$Row)
+				foreach($Row as $key=>$value) {
+					//$this->log->debug($key);
+					$t = explode("$", $key);
+					
+ 					$table = $t[0];
+ 					$column = $t[1];
+ 					$ret[$table][$idx][$column]=$value;
+				}
+			
+			$this->log->debug($ret);
+			
+ 			if ($ret) {
+// 				$ret = array();
+// 				$ret[$this->TableName]=$Results->toArray();
+ 				return ($ret);
+ 			}
 			return null;
 		}
 		catch (Exception $ex) {
@@ -80,9 +130,10 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 			$Results = array();
 	
 	
+			// TODO: Where is add where to select????
 			$sel=$this->Table->select();
 			//$sel->from(array($this->TableName => $this->TableName),array('*'));
-			$this->addConditionsToSelect($this->Config->conditions, $sel);
+			$this->addConditionsToSelect($this->TableName, $this->Config->conditions, $sel);
 			$sel->from($this->TableName, array(new Zend_Db_Expr("MAX(".$this->UpdatedColumn.") AS max_updt_dtm")));
 			$row=$this->Table->fetchAll($sel);
 			if ($row)
@@ -126,7 +177,7 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 			if (isset($updt_dtm)) {
 				$sel = $this->Table->select();
 				$sel->from(array($this->TableName => $this->TableName),array('*'));
-				$this->addConditionsToSelect($this->Config->conditions, $sel);
+				$this->addConditionsToSelect($this->TableName, $this->Config->conditions, $sel);
 				$sel->where($this->UpdatedColumn.' > ?',$updt_dtm);
 				$res=$this->Table->fetchAll($sel);
 				if (count($res)!=0) {
@@ -234,8 +285,8 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 	
 			$sel = $this->Table->select();
 			$sel->from(array($this->TableName => $this->TableName),array('*'));
-			$this->addConditionsToSelect($this->Config->conditions, $sel);
-			$this->createWhere($sel, $where);
+			$this->addConditionsToSelect($this->TableName, $this->Config->conditions, $sel);
+			$this->createWhere($this->TableName, $sel, $where);
 	
 			$whereData = $sel->getPart( Zend_Db_Select::WHERE );
 	

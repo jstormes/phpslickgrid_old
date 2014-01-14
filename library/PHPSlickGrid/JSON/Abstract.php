@@ -1,15 +1,21 @@
 <?php
 abstract class PHPSlickGrid_JSON_Abstract
 {
+	/** @var Zend_Db_Table_Abstract */
 	public $Table = null;
+	
+	
 	public $Config = null;
 	public $TableName = null;
 	public $PrimaryKey = null;
 	public $UpdatedColumn = null;
 	public $parameters = null;
 	
-	function __construct() {
+	public $log = null;
 	
+	function __construct() {
+
+		
 		// Get our logger for debugging
 		$this->log = Zend_Registry::get('log');
 	
@@ -31,8 +37,8 @@ abstract class PHPSlickGrid_JSON_Abstract
 	
 		// Get some info about our table
 		$this->TableName=$this->Table->info('name');
-		$info=$this->Table->info();
-		$this->PrimaryKey=array_shift($info['primary']);
+		$this->info=$this->Table->info();
+		$this->PrimaryKey=array_shift($this->info['primary']);
 	
 		// Set "Default" row updated date time column
 		$info = $this->Table->info('metadata');
@@ -60,13 +66,13 @@ abstract class PHPSlickGrid_JSON_Abstract
 	 * 
 	 * Conditions MUST be applied to every select!!!!!!
 	 *********************************************************************/
-	public function addConditionsToSelect($conditions, $select) {
+	public function addConditionsToSelect($table_name ,$conditions, $select) {
 	
 		foreach($conditions as $condition) {	
 			if ($condition->type=='and')
-				$select->where($condition->column.$condition->operator." ? ",$condition->value);
+				$select->where($table_name.".".$condition->column.$condition->operator." ? ",$condition->value);
 			else
-				$select->orWhere($condition->column.$condition->operator." ? ",$condition->value);
+				$select->orWhere($table_name.".".$condition->column.$condition->operator." ? ",$condition->value);
 		}
 		
 	}
@@ -74,11 +80,11 @@ abstract class PHPSlickGrid_JSON_Abstract
 	/***********************************************************************
 	 * Where filters are filters set by the user. 
 	 ***********************************************************************/
-	public function createWhere($sel, $where_list) {
+	public function createWhere($table_name, $sel, $where_list) {
 	
 		if (count($where_list)>0) {
 			foreach($where_list as $where) {
-				$columnName=$where['column'];
+				$columnName=$table_name.".".$where['column'];
 				$operator=$where['operator'];
 				$searchvalue=$where['searchvalue'];
 				$andor=$where['andor'];

@@ -280,17 +280,23 @@
 		    	// to refresh those rows.
 		        function success(block,data) {
 		            // Set Block of data
+		        	console.log("success");
+			        console.log(data);
+		        	
 		        	if (typeof self.pages[block] != 'undefined') {
 		        		//if (typeof self.options.table_name != 'undefined') {
 		        		//	self.pages[block].data=data[self.options.table_name];
 		        		//}
 		        		//else {
 		        			self.pages[block].data=data;
+		        			
 		        		//}
 			            
 			            // Create array of updated indices
 				        var indices = new Array();
 				        var len=self.pages[block].data[self.options.table_name].length;
+				        console.log("Data Len");
+				        console.log(self.pages[block].data[self.options.table_name].length);
 				        for (var i=0;i<len;i++) {
 				            indices[i]=(block*blockSize)+i;
 				            // Store the date time of the newest record, we use this later to see if 
@@ -363,8 +369,8 @@
 			        push(block);
 		        }
 
-		        
-		        
+		        console.log('Returing');
+		        console.log(self.pages[block].data[self.options.table_name]);
 		    
 		       	// return what we have.  If it was blank it will be 
 		       	// refreshed by the AJAX call.	  
