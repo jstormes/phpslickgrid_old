@@ -295,8 +295,8 @@
 			            // Create array of updated indices
 				        var indices = new Array();
 				        var len=self.pages[block].data[self.options.table_name].length;
-				        console.log("Data Len");
-				        console.log(self.pages[block].data[self.options.table_name].length);
+				        //console.log("Data Len");
+				        //console.log(self.pages[block].data[self.options.table_name].length);
 				        for (var i=0;i<len;i++) {
 				            indices[i]=(block*blockSize)+i;
 				            // Store the date time of the newest record, we use this later to see if 
@@ -370,6 +370,7 @@
 		        }
 
 		        console.log('Returing');
+		        console.log(self.options.table_name);
 		        console.log(self.pages[block].data[self.options.table_name]);
 		    
 		       	// return what we have.  If it was blank it will be 
