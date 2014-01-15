@@ -8,9 +8,10 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 	 * @param array options
 	 * @return integer
 	 */
-	public function getLength($options) {
+	public function getLength2($options) {
 		try
 		{
+			$this->getLength2($options);
 			// TODO: this line does not work.
 			$parameters=array_merge($options,$this->parameters);
 			//throw new Exception(print_r($options,true),32001);
@@ -21,12 +22,95 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 			$this->createWhere($this->TableName,$sel, $options['where_list']);
 			$Res = $this->Table->fetchRow($sel);
 			return $Res->num+10;
+			
 		}
 		catch (Exception $ex) {
 			throw new Exception($ex,32001);
 		}
 	}
 	
+	
+	public function getLength($options) {
+		
+		/*
+		 * Wraps the getBlockl SQL in a count.
+		 */
+		try
+		{
+			// Connect to tables
+			$link_table 	= new Application_Model_Grids_GridLink();
+			$right_table 	= new Application_Model_Grids_GridRight();
+			$left_table 	= new Application_Model_Grids_GridLeft();
+				
+			// Get schema of tables
+			$link_info 	= $link_table->info();
+			$right_info = $right_table->info();
+			$left_info 	= $left_table->info();
+				
+			// Make each column alias; "(table name).(column name) as (table name)$(column name)"
+			$column = array();
+			foreach($link_info['cols'] as $key=>$value) {
+				$columns[$link_info['name']."$".$value]=$link_info['name'].".".$value;
+			}
+		
+			foreach($right_info['cols'] as $key=>$value) {
+				$columns[$right_info['name']."$".$value]=$right_info['name'].".".$value;
+			}
+		
+			foreach($left_info['cols'] as $key=>$value) {
+				$columns[$left_info['name']."$".$value]=$left_info['name'].".".$value;
+			}
+				
+			/*
+			 * Select Left side records
+			*
+			* select * from grid_left
+			* left join grid_link on grid_link.grid_left_id = grid_left.grid_left_id
+			* left join grid_right on grid_link.grid_right_id = grid_right.grid_right_id
+			*/
+			$select_left = $left_table->select();
+			$select_left->setIntegrityCheck(false);
+			$select_left->from(array($left_info['name'] => $left_info['name']),$columns);
+			$select_left->joinLeftUsing($link_info['name'], 'grid_left_id', array());
+			$select_left->joinLeft(array($right_info['name'] => $right_info['name']),
+					$link_info['name'].'.grid_right_id = '.$right_info['name'].".grid_right_id"
+					, array());
+				
+			/*
+			 * Select Right side records
+			*
+			* select * from grid_right
+			* left join grid_link on grid_link.grid_right_id = grid_right.grid_right_id
+			* left join grid_left on grid_link.grid_left_id = grid_left.grid_left_id
+			*/
+			$select_right = $right_table->select();
+			$select_right->setIntegrityCheck(false);
+			$select_right->from(array($right_info['name'] => $right_info['name']),$columns);
+			$select_right->joinLeftUsing($link_info['name'], 'grid_right_id', array());
+			$select_right->joinLeft(array($left_info['name']=>$left_info['name']),
+					$link_info['name'].'.grid_left_id = '.$left_info['name'].".grid_left_id"
+					, array());
+				
+			/*
+			 * Union the two selects
+			*/
+			$union_select = $this->Table->select()->union(array($select_left,$select_right));
+			$union_select->setIntegrityCheck(false);
+			
+			
+			$count_select = $this->Table->select();
+			$count_select->setIntegrityCheck(false);
+			$count_select->from(new Zend_Db_Expr("(".$union_select.")"), 'COUNT(*) as num');
+		
+			$Res = $this->Table->fetchRow($count_select);
+			return $Res->num;
+
+		}
+		catch (Exception $ex) { // push the exception code into JSON range.
+			throw new Exception($ex, 32001);
+		}
+		
+	}
 	
 	public function getBlock($block,$options) {
 		
@@ -37,33 +121,24 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 			$right_table 	= new Application_Model_Grids_GridRight();
 			$left_table 	= new Application_Model_Grids_GridLeft();
 			
-			// Get scheam of tables
+			// Get schema of tables
 			$link_info 	= $link_table->info();
 			$right_info = $right_table->info();
 			$left_info 	= $left_table->info();
 			
-			// Get columns  Make each column alias; "(column name) as (table name)$(column name)" 
+			// Make each column alias; "(table name).(column name) as (table name)$(column name)" 
 			$column = array();
-			$link_columns 	= array();
 			foreach($link_info['cols'] as $key=>$value) {
-				$link_columns[$link_info['name']."$".$value]=$value;
 				$columns[$link_info['name']."$".$value]=$link_info['name'].".".$value;
 			}
-			
-			$right_columns 	= array();
+
 			foreach($right_info['cols'] as $key=>$value) {
-				$right_columns[$right_info['name']."$".$value]=$value;
 				$columns[$right_info['name']."$".$value]=$right_info['name'].".".$value;
 			}
-			
-			$left_columns 	= array();
+
 			foreach($left_info['cols'] as $key=>$value) {
-				$left_columns[$left_info['name']."$".$value]=$value;
 				$columns[$left_info['name']."$".$value]=$left_info['name'].".".$value;
 			}
-			
-			//$columns = array_merge($link_columns,$right_columns,$left_columns);
-			
 			
 			/*
 			 * Select Left side records
@@ -101,8 +176,8 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 			$union_select = $this->Table->select()->union(array($select_left,$select_right));
 			$union_select->setIntegrityCheck(false);
 		
-			/* Explode the results into row[Table Name][Index][Column] format
-			 * 
+			/* 
+			 * Explode the results into row[Table Name][Index][Column] format
 			 */
 			$Results = $this->Table->fetchAll($union_select)->toArray();
 			
