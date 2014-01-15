@@ -175,6 +175,7 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 			 */
 			$union_select = $this->Table->select()->union(array($select_left,$select_right));
 			$union_select->setIntegrityCheck(false);
+			$union_select->limit($options['blockSize'],$block*$options['blockSize']);
 		
 			/* 
 			 * Explode the results into row[Table Name][Index][Column] format
