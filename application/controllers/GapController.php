@@ -49,6 +49,7 @@ class GapController extends Zend_Controller_Action
         $this->GridConfigurationLeft->DataModel 	= new Application_Model_Grids_GridLeft();
         $this->GridConfigurationLeft->project_id	= $this->project_id;
         $this->GridConfigurationLeft->table_name	= 'grid_left';
+        //$this->GridConfigurationLeft->multiColumnSort      = true;
         //$this->GridConfiguration->join = array();
         //$this->GridConfiguration->JoinTo( new Application_Model_Grids_GridLeft() );
         //$this->GridConfiguration->JoinTo( new Application_Model_Grids_GridRight() );

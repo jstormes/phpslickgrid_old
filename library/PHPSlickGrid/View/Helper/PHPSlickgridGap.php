@@ -1,5 +1,5 @@
 <?php
-class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
+class PHPSlickgrid_View_Helper_PHPSlickgridGap extends Zend_View_Helper_Abstract
 {
     private $name=null;
     private $value=null;
@@ -11,7 +11,9 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
     private static $_files = array();
     private static $_removed = array();
     
-    public function PHPSlickgrid($name, $value = null, $attribs = null, $options=null)
+    private static $_common_js_loaded = false;
+    
+    public function PHPSlickgridGap($name, $value = null, $attribs = null, $options=null)
     {
         $this->name      = $name;
         $this->value     = $value;
@@ -69,7 +71,8 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         /**
          * Render the core slickgrid javascrip.
          */
-        $HTML=$this->RenderCoreSlickgrid();
+        $HTML = $this->_commonJavascript();
+        $HTML.=$this->RenderCoreSlickgrid();
         
         /**
          * Iterate over the plugins and call the plugins PostRender if it exists.
@@ -81,6 +84,46 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         return $HTML;
     }
     
+    
+	private function _commonJavascript() {
+    	if (!self::$_common_js_loaded) {
+    		self::$_common_js_loaded=true;
+    		
+    		$HTML = "<script>\n";
+    		
+    		$HTML .= "function LeftData(Options) {\n";
+    		$HTML .= 'var GapOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"'.$this->options->project_id.'","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/'.$this->options->project_id.'","gridName":"linkgrid"};'."\n";
+    		$HTML .= "  GapData.options.table_name='grid_left';\n";	
+    		$HTML .= "  return GapData.options.table_name='grid_left';\n";
+    		$HTML .= "}\n";
+    				
+    		
+    		$HTML .= 'var GapOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"'.$this->options->project_id.'","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/'.$this->options->project_id.'","gridName":"linkgrid"};'."\n";
+    		$HTML .= "var GapData = new PHPSlick.Data.DataCache(GapOptions);\n";
+    		$HTML .= "// **************************************************************\n";
+    		$HTML .= "// Wire up model events to update grid from dataView on changes\n";
+    		$HTML .= "// **************************************************************\n";
+    		$HTML .= "function GapInvalidate() {\n";
+    		
+    		$HTML .= "  GapData.invalidate();\n";
+    		
+    		$HTML .= "	leftgrid.invalidate();\n";
+    		$HTML .= "	leftgrid.render();\n";
+    		
+    		$HTML .= "	rightgrid.invalidate();\n";
+    		$HTML .= "	rightgrid.render();\n";
+    		
+    		$HTML .= "	linkgrid.invalidate();\n";
+    		$HTML .= "	linkgrid.render();\n";
+    		
+    		$HTML .= "}\n";
+    		$HTML .= "</script>\n";
+    		
+    		return $HTML;
+    		
+    	}
+    	return "";
+    }
     
     /**
      * Removes a previously appended script file.
@@ -151,10 +194,10 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
     
     private function RenderValues($value) {
         
-        $HTML="alert('Unkown data value format passed to slickgrid helper');";
+        //$HTML="alert('Unkown data value format passed to slickgrid helper');";
         
         if ($value==null) {
-            $HTML = "var ".$this->name."Data = new PHPSlick.Data.DataCache(".$this->name."Options);\n";
+           // $HTML = "var GapData = new PHPSlick.Data.DataCache(".$this->name."Options);\n";
             $this->live_data=true;
         }
         
@@ -179,12 +222,12 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
                 
                 $options = "{'jasonrpc':'$url'}";
                 
-                $HTML = "var ".$this->name."Data = new Slick.Data.DataCache($options);\n";
+               // $HTML = "var ".$this->name."Data = new Slick.Data.DataCache($options);\n";
                 $this->live_data=true;
             }
             
             if (get_class($value)=='PHPSlickGrid_GridConfig') {
-                $HTML = "var ".$this->name."Data = new PHPSlick.Data.DataCache(".$this->name."Options);\n";
+               // $HTML = "var ".$this->name."Data = new PHPSlick.Data.DataCache(".$this->name."Options);\n";
                 $this->live_data=true;
             }
         }
@@ -193,16 +236,16 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         // a javascrip array
         if (is_array($value)) {
             // TODO: implment 
-            $HTML="alert('Array data to slickgrid is not implmented.');";
+            //$HTML="alert('Array data to slickgrid is not implmented.');";
         }
         
         // if passed a string assume it is a jason RPC with
         // the requried methods: lengith and getItem
         if (is_string($value)) {
-            $HTML = "var ".$this->name."Data = new Slick.Data.DataCache(".$this->name."Options);\n";
+            //$HTML = "var ".$this->name."Data = new Slick.Data.DataCache(".$this->name."Options);\n";
         }
         
-        return $HTML;
+        return '';
         
     }
     
@@ -229,12 +272,12 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         $HTML .= "// **************************************************************\n";
         $HTML .= "// Wire up model events to update grid from dataView on changes\n";
         $HTML .= "// **************************************************************\n";
-        $HTML .= $this->name."Data.onRowCountChanged.subscribe(function (e, args) {\n";
+        $HTML .= "GapData.onRowCountChanged.subscribe(function (e, args) {\n";
         $HTML .= "    ".$this->name.".updateRowCount();\n";
         $HTML .= "    ".$this->name.".render();\n";
         $HTML .= "});\n\n";
         
-        $HTML .= $this->name."Data.onRowsChanged.subscribe(function (e, args) {\n";
+        $HTML .= "GapData.onRowsChanged.subscribe(function (e, args) {\n";
         $HTML .= "    ".$this->name.".invalidateRows(args.rows);\n";
         $HTML .= "    ".$this->name.".render();\n";
         $HTML .= "});\n\n";
@@ -251,12 +294,12 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         $HTML .= "    if ((LastUpdate+2500)<(d.getTime())) {\n";
         //$HTML .= "        console.log('updating data '+LastUpdate)\n";
         
-        $HTML .= "        ".$this->name."Data.updateDataSync();\n";
+        $HTML .= "        GapData.updateDataSync();\n";
         $HTML .= "        LastUpdate=d.getTime();\n";
         $HTML .= "    }\n";
         $HTML .= "});\n\n";
         
-        $HTML .= $this->name."Data.onRowsChanged.subscribe(function (e, args) {\n";
+        $HTML .= "GapData.onRowsChanged.subscribe(function (e, args) {\n";
         $HTML .= "    ".$this->name.".invalidateRows(args.rows);\n";
         $HTML .= "    ".$this->name.".render();\n";
         $HTML .= "});\n\n";
@@ -276,10 +319,11 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         $HTML .= "    else\n";
         $HTML .= "      sortarray.push(tableName+'$'+cols[i].sortCol.field+' desc');\n";
         $HTML .= "  }\n";
-        $HTML .= "  ".$this->name."Data.setSort(sortarray);\n";      
-        $HTML .= "  ".$this->name."Data.invalidate();\n";
-        $HTML .= "  ".$this->name.".invalidate();\n";
-        $HTML .= "  ".$this->name.".render();\n";
+        $HTML .= "  GapData.setSort(sortarray);\n";      
+//        $HTML .= "  ".$this->name."Data.invalidate();\n";
+        $HTML .= "	GapInvalidate()\n";
+//        $HTML .= "  ".$this->name.".invalidate();\n";
+//        $HTML .= "  ".$this->name.".render();\n";
         $HTML .= "});\n\n";
         
         $HTML .= "\n\n";
@@ -288,7 +332,7 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         $HTML .= "// ****************************************************************\n";
         $HTML .= $this->name.".onCellChange.subscribe(function(e, args) {\n";
         //$HTML .= "console.log(args.item);\n";
-        $HTML .= "  ".$this->name."Data.updateItem(args.item); // Send updated row to server\n";
+        $HTML .= "  GapData.updateItem(args.item); // Send updated row to server\n";
         $HTML .= "});\n";
         
         $HTML .= "\n\n";
@@ -297,8 +341,8 @@ class PHPSlickgrid_View_Helper_PHPSlickgrid extends Zend_View_Helper_Abstract
         $HTML .= "// ****************************************************************\n";
         $HTML .= $this->name.".onAddNewRow.subscribe(function(e, args) {\n";
         //$HTML .= "console.log(args.item);\n";
-        $HTML .= "  ".$this->name."Data.addItem(args.item); // Send updated row to server\n";
-        $HTML .= "  ".$this->name."Data.invalidate();\n";
+        $HTML .= "  GapData.addItem(args.item); // Send updated row to server\n";
+        $HTML .= "  GapData.invalidate();\n";
        // $HTML .= "  ".$this->name.".invalidate();\n";
        // $HTML .= "  ".$this->name.".render();\n";
         $HTML .= "});\n";

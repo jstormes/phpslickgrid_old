@@ -3,7 +3,7 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 	
 	
 	/**
-	 * returns the number of data items in the set
+	 * returns the number of data rows in the set
 	 *
 	 * @param array options
 	 * @return integer
@@ -116,6 +116,9 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 		
 		try
 		{
+			// Merge javascript options with php parameters.
+			$parameters=array_merge_recursive($options,$this->parameters);
+			
 			// Connect to tables
 			$link_table 	= new Application_Model_Grids_GridLink();
 			$right_table 	= new Application_Model_Grids_GridRight();
@@ -176,7 +179,15 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 			$union_select = $this->Table->select()->union(array($select_left,$select_right));
 			$union_select->setIntegrityCheck(false);
 			$union_select->limit($options['blockSize'],$block*$options['blockSize']);
-		
+			
+			/*
+			 * Set sorts
+			 */
+			// Build our order by
+ 			foreach($parameters['order_list'] as $orderby) {
+ 				$union_select->order($orderby);
+ 			}
+			
 			/* 
 			 * Explode the results into row[Table Name][Index][Column] format
 			 */
@@ -212,7 +223,6 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 		//sleep(5); // Simulate a slow reply
 		try
 		{
-			//$this->log->debug("getBlock");
 			//throw new Exception(print_r($options,true));
 			// Merge Options from both the controller and JSON call
 			$parameters=array_merge_recursive($options,$this->parameters);
@@ -286,7 +296,6 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 			//$sel->limit($options['blockSize'],$block*$options['blockSize']);
 			/************* End sel 2 *****************/
 			
-			$this->log->debug($sel->__toString());
 			$union_sel = $this->Table->select()->union(array($sel,$sel2));
 			$union_sel->setIntegrityCheck(false);
 			//$union_sel->limit($options['blockSize'],$block*$options['blockSize']);
@@ -300,10 +309,6 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 
 			$Results = $this->Table->fetchAll($union_sel)->toArray();
 			
-			$this->log->debug("Results");
-			$this->log->debug($Results);
-			
-			
 			$ret = array();
 			//$ret[$table] = array();
 				
@@ -316,8 +321,6 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
  					$column = $t[1];
  					$ret[$table][$idx][$column]=$value;
 				}
-			
-			$this->log->debug($ret);
 			
  			if ($ret) {
 // 				$ret = array();
@@ -455,7 +458,7 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 	
 			foreach($this->Config->staticFields as $field) {
 				$NewRow[$field['field']]=$field['value'];
-				$this->log->debug($field);
+				//$this->log->debug($field);
 			}
 	
 			foreach($row as $Key=>$Value) {

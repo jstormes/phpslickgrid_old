@@ -7,6 +7,16 @@ class PHPSlickGrid_GridConfig {
     public $plugins    = array();
     public $staticFields = array(); 
     public $join		= array();
+    
+    
+    
+    
+    function __construct () {
+    	// multi sort defult to true to match
+    	// Wire up the sort to the data layer
+    	// in the view!!!!
+    	$this->__set("multiColumnSort",true);
+    }
 
     public function __set($name, $value)
     {

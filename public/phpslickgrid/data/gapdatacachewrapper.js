@@ -2,58 +2,13 @@
 	  $.extend(true, window, {
 	    PHPSlick: {
 	      Data: {
-	        DataCache: DataCache
+	        GapDataCacheWrapper: GapDataCacheWrapper
 	      }
 	    }
 	  });
 
+	  function GapDataCacheWrapper(tablename, options) {
 
-	  /***
-	   * A sample Model implementation.
-	   * Provides a un-filtered view of the underlying data.
-	   * 
-	   * Block Math:
-	   *     idx = index of the requstes row.  This is just the array index and is 
-	   *           known only by this script and the slickgrid
-       *
-	   *     blockSize = Size of a AJAX request block.  That is the number of rows
-	   *                 an AJAX request returns and the size of block in the local
-	   *                 buffer. 
-	   *
-	   *     block = (Math.floor(idx/blockSize)), The block number requested via AJAX
-	   *             and stored in the local buffer.
-	   *
-	   *     blockIdx = index of the block record.
-	   *           
-	   */
-	  function DataCache(options) {
-
-		  // alert(options);
-		  //console.log(options);
-		  var self = this;
-
-		  
-		  var defaults = {
-			      jsonrpc: null,
-			      upd_dtm_col: null,
-			      primay_col: null,
-			      blockSize: 100,
-			      bufferSize: 10,
-//			      pollFrequency: 2500,    // 2.5 Seconds
-//			      pollFrequency: 10000,    // 10 Seconds
-			      pollFrequency: 1000000,    // 1000 Seconds
-			      gridName: 'grid',        // Used to tie back to Zend_Session.
-			      order_list: {},
-			      where_list: new Array()
-			    };
-		    
-		  self.options = $.extend(true, {}, defaults, options);
-		  
-		  //self.options.primay_col
-		  //self.options.upd_dtm_col
-
-		  //console.log(self.options['jsonrpc']);
-		  //console.log(options);
 		  
 		  function setSort(sortarray) {
 
