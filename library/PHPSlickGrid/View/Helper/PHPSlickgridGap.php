@@ -91,33 +91,33 @@ class PHPSlickgrid_View_Helper_PHPSlickgridGap extends Zend_View_Helper_Abstract
     		
     		$HTML = "<script>\n";
     		
-    		$HTML .= "function LeftData(Options) {\n";
-    		$HTML .= 'var GapOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"'.$this->options->project_id.'","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/'.$this->options->project_id.'","gridName":"linkgrid"};'."\n";
-    		$HTML .= "  GapData.options.table_name='grid_left';\n";	
-    		$HTML .= "  return GapData.options.table_name='grid_left';\n";
-    		$HTML .= "}\n";
+//     		$HTML .= "function LeftData(Options) {\n";
+//     		$HTML .= 'var GapOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"'.$this->options->project_id.'","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/'.$this->options->project_id.'","gridName":"linkgrid"};'."\n";
+//     		$HTML .= "  GapData.options.table_name='grid_left';\n";	
+//     		$HTML .= "  return GapData.options.table_name='grid_left';\n";
+//     		$HTML .= "}\n";
     				
     		
-    		$HTML .= 'var GapOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"'.$this->options->project_id.'","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/'.$this->options->project_id.'","gridName":"linkgrid"};'."\n";
-    		$HTML .= "var GapData = new PHPSlick.Data.DataCache(GapOptions);\n";
-    		$HTML .= "// **************************************************************\n";
-    		$HTML .= "// Wire up model events to update grid from dataView on changes\n";
-    		$HTML .= "// **************************************************************\n";
-    		$HTML .= "function GapInvalidate() {\n";
+//     		$HTML .= 'var GapOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"'.$this->options->project_id.'","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/'.$this->options->project_id.'","gridName":"linkgrid"};'."\n";
+//     		$HTML .= "var GapData = new PHPSlick.Data.DataCache(GapOptions);\n";
+//     		$HTML .= "// **************************************************************\n";
+//     		$HTML .= "// Wire up model events to update grid from dataView on changes\n";
+//     		$HTML .= "// **************************************************************\n";
+//     		$HTML .= "function GapInvalidate() {\n";
     		
-    		$HTML .= "  GapData.invalidate();\n";
+//     		$HTML .= "  GapData.invalidate();\n";
     		
-    		$HTML .= "	leftgrid.invalidate();\n";
-    		$HTML .= "	leftgrid.render();\n";
+//     		$HTML .= "	leftgrid.invalidate();\n";
+//     		$HTML .= "	leftgrid.render();\n";
     		
-    		$HTML .= "	rightgrid.invalidate();\n";
-    		$HTML .= "	rightgrid.render();\n";
+//     		$HTML .= "	rightgrid.invalidate();\n";
+//     		$HTML .= "	rightgrid.render();\n";
     		
-    		$HTML .= "	linkgrid.invalidate();\n";
-    		$HTML .= "	linkgrid.render();\n";
+//     		$HTML .= "	linkgrid.invalidate();\n";
+//     		$HTML .= "	linkgrid.render();\n";
     		
-    		$HTML .= "}\n";
-    		$HTML .= "</script>\n";
+//     		$HTML .= "}\n";
+     		$HTML .= "</script>\n";
     		
     		return $HTML;
     		
@@ -165,6 +165,7 @@ class PHPSlickgrid_View_Helper_PHPSlickgridGap extends Zend_View_Helper_Abstract
         $HTML .= $this->PreGridRinder();
         //$HTML .= "$(function () {".$name." = new Slick.Grid('#$name', ".$name."Data, ".$name."Columns, ".$name."Options);})\n";
         $HTML .= "var ".$name." = new Slick.Grid('#$name', ".$name."Data, ".$name."Columns, ".$name."Options);\n";
+        //$HTML .= "var ".$name." = new Slick.Grid('#$name', Data, ".$name."Columns, ".$name."Options);\n";
         $HTML .= $this->PostGirdRinder();
         $HTML .= "</script>\n";
         
@@ -269,45 +270,45 @@ class PHPSlickgrid_View_Helper_PHPSlickgridGap extends Zend_View_Helper_Abstract
         //$HTML .= "});\n\n";
         
         
-        $HTML .= "// **************************************************************\n";
-        $HTML .= "// Wire up model events to update grid from dataView on changes\n";
-        $HTML .= "// **************************************************************\n";
-        $HTML .= "GapData.onRowCountChanged.subscribe(function (e, args) {\n";
-        $HTML .= "    ".$this->name.".updateRowCount();\n";
-        $HTML .= "    ".$this->name.".render();\n";
-        $HTML .= "});\n\n";
+//        $HTML .= "// **************************************************************\n";
+//        $HTML .= "// Wire up model events to update grid from dataView on changes\n";
+ //       $HTML .= "// **************************************************************\n";
+ //       $HTML .= "GapData.onRowCountChanged.subscribe(function (e, args) {\n";
+//        $HTML .= "    ".$this->name.".updateRowCount();\n";
+//        $HTML .= "    ".$this->name.".render();\n";
+//        $HTML .= "});\n\n";
         
-        $HTML .= "GapData.onRowsChanged.subscribe(function (e, args) {\n";
-        $HTML .= "    ".$this->name.".invalidateRows(args.rows);\n";
-        $HTML .= "    ".$this->name.".render();\n";
-        $HTML .= "});\n\n";
+//        $HTML .= "GapData.onRowsChanged.subscribe(function (e, args) {\n";
+//        $HTML .= "    ".$this->name.".invalidateRows(args.rows);\n";
+//        $HTML .= "    ".$this->name.".render();\n";
+//        $HTML .= "});\n\n";
         
-        $HTML .= "// **************************************************************\n";
-        $HTML .= "// Wire up model events to update grid from dataView on Tab between cells\n";
-        $HTML .= "// **************************************************************\n";
-        $HTML .= "    var d = new Date();\n";
-        $HTML .= "var LastUpdate=d.getTime();\n";
-        $HTML .= $this->name.".onBeforeEditCell.subscribe(function (e, args) {\n";
-        $HTML .= "    var d = new Date();\n";
+//        $HTML .= "// **************************************************************\n";
+//        $HTML .= "// Wire up model events to update grid from dataView on Tab between cells\n";
+//        $HTML .= "// **************************************************************\n";
+//        $HTML .= "    var d = new Date();\n";
+//        $HTML .= "var LastUpdate=d.getTime();\n";
+//        $HTML .= $this->name.".onBeforeEditCell.subscribe(function (e, args) {\n";
+//        $HTML .= "    var d = new Date();\n";
         //$HTML .= "    console.log('position changed '+(LastUpdate+1000)+' '+(d.getTime()));\n";
-        $HTML .= "    // Keep updates from queing to fast.\n";
-        $HTML .= "    if ((LastUpdate+2500)<(d.getTime())) {\n";
+//        $HTML .= "    // Keep updates from queing to fast.\n";
+//        $HTML .= "    if ((LastUpdate+2500)<(d.getTime())) {\n";
         //$HTML .= "        console.log('updating data '+LastUpdate)\n";
         
-        $HTML .= "        GapData.updateDataSync();\n";
-        $HTML .= "        LastUpdate=d.getTime();\n";
-        $HTML .= "    }\n";
-        $HTML .= "});\n\n";
+//        $HTML .= "        GapData.updateDataSync();\n";
+//        $HTML .= "        LastUpdate=d.getTime();\n";
+//        $HTML .= "    }\n";
+//        $HTML .= "});\n\n";
         
-        $HTML .= "GapData.onRowsChanged.subscribe(function (e, args) {\n";
-        $HTML .= "    ".$this->name.".invalidateRows(args.rows);\n";
-        $HTML .= "    ".$this->name.".render();\n";
-        $HTML .= "});\n\n";
+//        $HTML .= "GapData.onRowsChanged.subscribe(function (e, args) {\n";
+//        $HTML .= "    ".$this->name.".invalidateRows(args.rows);\n";
+//        $HTML .= "    ".$this->name.".render();\n";
+//        $HTML .= "});\n\n";
         
-        $HTML .= "\n\n";
-        $HTML .= "// ****************************************************************\n";
-        $HTML .= "// Wire up the sort to the data layer\n";
-        $HTML .= "// ****************************************************************\n";
+//        $HTML .= "\n\n";
+//        $HTML .= "// ****************************************************************\n";
+//        $HTML .= "// Wire up the sort to the data layer\n";
+//        $HTML .= "// ****************************************************************\n";
         $HTML .= $this->name.".onSort.subscribe(function (e, args) {\n";
 //        $HTML .= "  console.log(args);\n";
 		$HTML .= "	var tableName = ".$this->name."Options['table_name'];\n";
@@ -540,6 +541,10 @@ class PHPSlickgrid_View_Helper_PHPSlickgridGap extends Zend_View_Helper_Abstract
         
         // Load the PHPSlickgrid required js files
         $this->AppendOnlyOnce('/phpslickgrid/data/datacache.js');
+        
+        $this->AppendOnlyOnce('/phpslickgrid/json/gapdatacache.js');
+        
+        
         //$this->view->headScript()->appendFile('/phpslick/powerfilter.js');
         //$this->view->headScript()->appendFile('/phpslick/powerfilter2.js');
 //        $this->view->headScript()->appendFile('/phpslick/headerdialog.js');

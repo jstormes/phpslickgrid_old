@@ -9,10 +9,65 @@
 }
 </style>
 
+<script>
+
+
+
+
+//var GapOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"linkgrid"};
+//var GapData = new PHPSlick.Data.DataCache(GapOptions);
+// **************************************************************
+// Wire up model events to update grid from dataView on changes
+// **************************************************************
+function GapInvalidate() {
+//	GapData.invalidate();
+	
+//	leftgrid.invalidate();
+//	leftgrid.render();
+
+	//rightgrid.invalidate();
+	//rightgrid.render();
+	//linkgrid.invalidate();
+	//linkgrid.render();
+}
+
+var dataOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"leftgrid"};
+Data =  new PHPSlickGrid.JSON.GapDataCache(dataOptions);
+
+Data.onRowCountChanged.subscribe(function (e, args) {
+	
+    //leftgrid.updateRowCount();
+    //leftgrid.render();
+
+    linkgrid.updateRowCount();
+    linkgrid.render();
+});
+
+
+Data.onRowsChanged.subscribe(function (e, args) {
+	linkgrid.invalidateRows(args.rows);
+	linkgrid.render();
+});
+
+// function leftgridData() {
+
+// 	function getLength() {
+// 		return Data.getLength();
+// 	}
+
+// 	function getItem(item) {
+// 		//Data.options.table_name='grid_left';
+// 		return Data.getItem(item);
+// 	}
+// }
+
+		
+</script>
+
 <div id='phpslickgrid' style="height:100%;">
 
 	<div id='leftgrid' style="overflow: auto; height:100%; float:left; width:40%;">
-		<?php echo $this->PHPSlickgridGap("leftgrid",null,$this->GridColumnConfigurationLeft,$this->GridConfigurationLeft); ?>
+		<?php //echo $this->PHPSlickgridGap("leftgrid",null,$this->GridColumnConfigurationLeft,$this->GridConfigurationLeft); ?>
 	</div>
 	
 	<div id='linkgrid' style="overflow: auto; height:100%; width: 100px; float:left;border-left:3px solid blue;border-right:3px solid blue;">
@@ -20,7 +75,7 @@
 	</div>
  
 	<div id='rightgrid' style="overflow: auto; height:100%;float:left; width: 40%;">
-		<?php echo $this->PHPSlickgridGap("rightgrid",null,$this->GridColumnConfigurationRight,$this->GridConfigurationRight); ?>
+		<?php //echo $this->PHPSlickgridGap("rightgrid",null,$this->GridColumnConfigurationRight,$this->GridConfigurationRight); ?>
 	</div>
 	
 </div>
@@ -38,12 +93,12 @@ $('div.slick-viewport:last').css({"overflow-y" : 'auto !important'});
 
 
 
-rightgrid.onScroll.subscribe(function(e,args){
-    // console.log(e);
-    // console.log(args);
-	linkgrid.scrollPort(args.scrollTop);
-	leftgrid.scrollPort(args.scrollTop);
-});
+// rightgrid.onScroll.subscribe(function(e,args){
+//     // console.log(e);
+//     // console.log(args);
+// 	linkgrid.scrollPort(args.scrollTop);
+// 	leftgrid.scrollPort(args.scrollTop);
+// });
 
 
 
