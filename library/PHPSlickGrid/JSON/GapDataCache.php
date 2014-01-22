@@ -81,6 +81,8 @@ class PHPSlickGrid_JSON_GapDataCache extends PHPSlickGrid_JSON_Abstract {
 		$union_select = $this->Table->select()->union(array($select_left,$select_right));
 		$union_select->setIntegrityCheck(false);
 		
+		return $union_select;
+		
 	}
 	
 	public function getLength($options) {
@@ -125,7 +127,7 @@ class PHPSlickGrid_JSON_GapDataCache extends PHPSlickGrid_JSON_Abstract {
 			}
 			
 			/*
-			 * Explode the results into row[Table Name][Index][Column] format
+			 * Explode the results into row[Index][Table Name][Column] format
 			*/
 			$Results = $this->Table->fetchAll($select)->toArray();
 				
@@ -135,7 +137,7 @@ class PHPSlickGrid_JSON_GapDataCache extends PHPSlickGrid_JSON_Abstract {
 					$t = explode("$", $key);
 					$table = $t[0];
 					$column = $t[1];
-					$ret[$table][$idx][$column]=$value;
+					$ret[$idx][$table][$column]=$value;
 				}
 			}
 				

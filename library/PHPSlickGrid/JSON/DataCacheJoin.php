@@ -199,7 +199,7 @@ class PHPSlickGrid_JSON_DataCacheJoin extends PHPSlickGrid_JSON_Abstract {
 					$t = explode("$", $key);				
 					$table = $t[0];
 					$column = $t[1];
-					$ret[$table][$idx][$column]=$value;
+					$ret[$idx][$table][$column]=$value;
 				}
 			}
 			

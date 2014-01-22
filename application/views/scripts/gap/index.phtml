@@ -14,22 +14,7 @@
 
 
 
-//var GapOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"linkgrid"};
-//var GapData = new PHPSlick.Data.DataCache(GapOptions);
-// **************************************************************
-// Wire up model events to update grid from dataView on changes
-// **************************************************************
-function GapInvalidate() {
-//	GapData.invalidate();
-	
-//	leftgrid.invalidate();
-//	leftgrid.render();
 
-	//rightgrid.invalidate();
-	//rightgrid.render();
-	//linkgrid.invalidate();
-	//linkgrid.render();
-}
 
 var dataOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_link","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"leftgrid"};
 Data =  new PHPSlickGrid.JSON.GapDataCache(dataOptions);
@@ -41,6 +26,9 @@ Data.onRowCountChanged.subscribe(function (e, args) {
 
     linkgrid.updateRowCount();
     linkgrid.render();
+
+    rightgrid.updateRowCount();
+    rightgrid.render();
 });
 
 
@@ -51,7 +39,24 @@ Data.onRowsChanged.subscribe(function (e, args) {
 	
 	linkgrid.invalidateRows(args.rows);
 	linkgrid.render();
+
+	rightgrid.invalidateRows(args.rows);
+	rightgrid.render();
 });
+
+function GapInvalidate() {
+
+	Data.invalidate();
+	
+	leftgrid.invalidate();
+	leftgrid.render();
+	
+	linkgrid.invalidate();
+	linkgrid.render();
+
+	rightgrid.invalidate();
+	rightgrid.render();
+}
 
 var dataLinkOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_link","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"linkgrid"};
 linkgridData = new PHPSlickGrid.JSON.GapDataCacheTable(dataLinkOptions,Data);
@@ -59,20 +64,8 @@ linkgridData = new PHPSlickGrid.JSON.GapDataCacheTable(dataLinkOptions,Data);
 var dataLeftOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"leftgrid"};
 leftgridData = new PHPSlickGrid.JSON.GapDataCacheTable(dataLeftOptions,Data);
 
-
-
-// function leftgridData() {
-
-// 	function getLength() {
-// 		return Data.getLength();
-// 	}
-
-// 	function getItem(item) {
-// 		//Data.options.table_name='grid_left';
-// 		return Data.getItem(item);
-// 	}
-// }
-
+var dataRightOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_right","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"rightgrid"};
+rightgridData = new PHPSlickGrid.JSON.GapDataCacheTable(dataRightOptions,Data);
 		
 </script>
 
@@ -87,7 +80,7 @@ leftgridData = new PHPSlickGrid.JSON.GapDataCacheTable(dataLeftOptions,Data);
 	</div>
  
 	<div id='rightgrid' style="overflow: auto; height:100%;float:left; width: 40%;">
-		<?php //echo $this->PHPSlickgridGap("rightgrid",null,$this->GridColumnConfigurationRight,$this->GridConfigurationRight); ?>
+		<?php echo $this->PHPSlickgridGap("rightgrid",null,$this->GridColumnConfigurationRight,$this->GridConfigurationRight); ?>
 	</div>
 	
 </div>

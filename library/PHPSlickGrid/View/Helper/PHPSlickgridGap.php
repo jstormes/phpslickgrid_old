@@ -320,7 +320,7 @@ class PHPSlickgrid_View_Helper_PHPSlickgridGap extends Zend_View_Helper_Abstract
         $HTML .= "    else\n";
         $HTML .= "      sortarray.push(tableName+'$'+cols[i].sortCol.field+' desc');\n";
         $HTML .= "  }\n";
-        $HTML .= "  GapData.setSort(sortarray);\n";      
+        $HTML .= "  Data.setSort(sortarray);\n";      
 //        $HTML .= "  ".$this->name."Data.invalidate();\n";
         $HTML .= "	GapInvalidate()\n";
 //        $HTML .= "  ".$this->name.".invalidate();\n";

@@ -42,8 +42,8 @@
 					// 'error': function(data) {alert(data);inFlight=0;}, //
 					// Connection error
 					'error' : function(data) {
-						alert('The connection to the server has timed out.  Click OK to try again.');
-						inFlight = 0;
+						//alert('The connection to the server has timed out.  Click OK to try again.');
+						//inFlight = 0;
 					}, // Connection error
 					'exceptionHandler' : function(data) {
 						alert(data);
@@ -57,7 +57,7 @@
 		// function getLength
 		function getLength() {
 
-			console.log("getLength()");
+			//console.log("getLength()");
 			var now = new Date();
 
 			// If it has been more than 1000ms (1 second)
@@ -81,7 +81,7 @@
 			return (self.datalength - 0);
 		}
 
-		function updateBlock(block, data) {
+		function getBlock(block, data) {
 			var blockSize = self.options.blockSize;
 			var newestRecord = self.options.newestRecord;
 
@@ -90,20 +90,20 @@
 
 			// Create array of updated indices
 			var indices = new Array();
-			var len = self.pages[block].data[self.options.table_name].length;
+			var len = self.pages[block].data.length;
 			for ( var i = 0; i < len; i++) {
 				indices[i] = (block * blockSize) + i;
 				// Store the date time of the newest record, we use this later
 				// to see if
 				// we need to refresh the block, column must be named updt_dtm
 				// in the db.
-				if (typeof self.pages[block].data[self.options.table_name][i][self.options.upd_dtm_col] != 'undefined')
-					if (self.pages[block].data[self.options.table_name][i][self.options.upd_dtm_col] > self.pages[block].updt_dtm)
-						self.pages[block].updt_dtm = self.pages[block].data[self.options.table_name][i][self.options.upd_dtm_col];
+				if (typeof self.pages[block].data[i][self.options.table_name][self.options.upd_dtm_col] != 'undefined')
+					if (self.pages[block].data[i][self.options.table_name][self.options.upd_dtm_col] > self.pages[block].updt_dtm)
+						self.pages[block].updt_dtm = self.pages[block].data[i][self.options.table_name][self.options.upd_dtm_col];
 
 				// primay key mapping to indices
 				self.reverseLookup["k"
-						+ self.pages[block].data[self.options.table_name][i][self.options.primay_col]] = (block * blockSize)
+						+ self.pages[block].data[i][self.options.table_name][self.options.primay_col]] = (block * blockSize)
 						+ i;
 			}
 			// Keep a record of the newest record we have seen
@@ -125,19 +125,34 @@
 			// index of the item requested in the current block
 			var idx = item % blockSize;
 
+			// if we don't have the requested block, send AJAX request for it.
+			// Send only one request per block.
 			if (typeof self.pages[block] == 'undefined') {
+				self.pages[block] = new Object();
+				self.pages[block].data = new Array();
 				self.service.getBlock(block, self.options, {
 					'success' : function(data) {
-						updateBlock(block, data);
+						getBlock(block, data);
 					}
 				});
-				// we have no item to return
-				return null;
 			}
 
-			//return self.pages[block].data[self.options.table_name][idx];
-			return self.pages[block].data;
+			// return whatever we have.
+			return self.pages[block].data[idx];
 		}
+		
+		function invalidate() {
+	    	  self.datalength = null;
+	    	  self.pages = [];
+	    	  self.reverseLookup = [];
+	    	  //self.activeBuffers = [];
+	    	  //self.newestRecord='0';
+	      }
+		
+		
+		function setSort(sortarray) {
+			  self.options.order_list = sortarray;
+	      }
 
 		return {
 
@@ -145,8 +160,9 @@
 			"getLength" : getLength,
 			"getItem" : getItem,
 			"onRowCountChanged" : onRowCountChanged,
-			"onRowsChanged" : onRowsChanged,
-			"options" : options
+			"onRowsChanged" : onRowsChanged	,
+			"setSort" : setSort,
+			"invalidate" : invalidate
 
 		};
 	}
