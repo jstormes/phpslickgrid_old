@@ -1,4 +1,4 @@
-(function($) {
+ (function($) {
 	$.extend(true, window, {
 		PHPSlickGrid : {
 			JSON : {
@@ -9,7 +9,7 @@
 
 	function GapDataCacheTable(options,Data) {
 
-		var self = Data;
+		//var self = Data;
 		
 		// events
 		var onRowCountChanged = new Slick.Event();
@@ -28,13 +28,18 @@
 
 		
 		function getLength() {
+			console.log(Data);
 			Data.options.table_name=options.table_name;
 			return Data.getLength();
 		}
 		
 		function getItem(item) {
 			Data.options.table_name=options.table_name;
-			return Data.getItem(item);
+			var D = Data.getItem(item);
+			if (D==null)
+				return null;
+			var idx = item % 100;
+			return D[options.table_name][idx];
 		}
 		
 		return {

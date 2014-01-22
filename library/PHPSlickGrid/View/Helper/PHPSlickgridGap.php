@@ -543,6 +543,7 @@ class PHPSlickgrid_View_Helper_PHPSlickgridGap extends Zend_View_Helper_Abstract
         $this->AppendOnlyOnce('/phpslickgrid/data/datacache.js');
         
         $this->AppendOnlyOnce('/phpslickgrid/json/gapdatacache.js');
+        $this->AppendOnlyOnce('/phpslickgrid/json/gapdatacache_table.js');
         
         
         //$this->view->headScript()->appendFile('/phpslick/powerfilter.js');

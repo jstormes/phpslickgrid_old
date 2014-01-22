@@ -135,7 +135,8 @@
 				return null;
 			}
 
-			return self.pages[block].data[self.options.table_name][idx];
+			//return self.pages[block].data[self.options.table_name][idx];
+			return self.pages[block].data;
 		}
 
 		return {
@@ -145,6 +146,7 @@
 			"getItem" : getItem,
 			"onRowCountChanged" : onRowCountChanged,
 			"onRowsChanged" : onRowsChanged,
+			"options" : options
 
 		};
 	}

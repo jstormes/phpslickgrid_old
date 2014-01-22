@@ -31,13 +31,13 @@ function GapInvalidate() {
 	//linkgrid.render();
 }
 
-var dataOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"leftgrid"};
+var dataOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_link","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"leftgrid"};
 Data =  new PHPSlickGrid.JSON.GapDataCache(dataOptions);
 
 Data.onRowCountChanged.subscribe(function (e, args) {
 	
-    //leftgrid.updateRowCount();
-    //leftgrid.render();
+    leftgrid.updateRowCount();
+    leftgrid.render();
 
     linkgrid.updateRowCount();
     linkgrid.render();
@@ -45,9 +45,21 @@ Data.onRowCountChanged.subscribe(function (e, args) {
 
 
 Data.onRowsChanged.subscribe(function (e, args) {
+
+	leftgrid.invalidateRows(args.rows);
+	leftgrid.render();
+	
 	linkgrid.invalidateRows(args.rows);
 	linkgrid.render();
 });
+
+var dataLinkOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_link","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"linkgrid"};
+linkgridData = new PHPSlickGrid.JSON.GapDataCacheTable(dataLinkOptions,Data);
+
+var dataLeftOptions = {"multiColumnSort":true,"DataModel":{},"project_id":"21","table_name":"grid_left","jsonrpc":"\/gap\/rpc\/project_id\/21","gridName":"leftgrid"};
+leftgridData = new PHPSlickGrid.JSON.GapDataCacheTable(dataLeftOptions,Data);
+
+
 
 // function leftgridData() {
 
@@ -67,7 +79,7 @@ Data.onRowsChanged.subscribe(function (e, args) {
 <div id='phpslickgrid' style="height:100%;">
 
 	<div id='leftgrid' style="overflow: auto; height:100%; float:left; width:40%;">
-		<?php //echo $this->PHPSlickgridGap("leftgrid",null,$this->GridColumnConfigurationLeft,$this->GridConfigurationLeft); ?>
+		<?php echo $this->PHPSlickgridGap("leftgrid",null,$this->GridColumnConfigurationLeft,$this->GridConfigurationLeft); ?>
 	</div>
 	
 	<div id='linkgrid' style="overflow: auto; height:100%; width: 100px; float:left;border-left:3px solid blue;border-right:3px solid blue;">
