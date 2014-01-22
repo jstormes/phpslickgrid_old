@@ -157,6 +157,7 @@ class PHPSlickgrid_View_Helper_PHPSlickgridGap extends Zend_View_Helper_Abstract
         $name=$this->name;
         
         $HTML  = "<div id='$name' style='height:100%;'></div>\n";
+        //$HTML  = "<div id='$name' style=''></div>\n";
         $HTML .= "<script>\n";
         //$HTML .= "var $name;\n";
         $HTML .= $this->RenderColumns();

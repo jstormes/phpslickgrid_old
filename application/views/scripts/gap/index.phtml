@@ -71,8 +71,12 @@ rightgridData = new PHPSlickGrid.JSON.GapDataCacheTable(dataRightOptions,Data);
 
 <div id='phpslickgrid' style="height:100%;">
 
-	<div id='leftgrid' style="overflow: auto; height:100%; float:left; width:40%;">
+	<div id='leftgrid2' style="overflow: hidden; height:100%; float:left; width:40%;">
+		<div id='test22' style="height:100%;">
 		<?php echo $this->PHPSlickgridGap("leftgrid",null,$this->GridColumnConfigurationLeft,$this->GridConfigurationLeft); ?>
+		</div>
+		<div style="width:100%;visibility:visible;height:20px;"><?php echo $this->load_left; ?>
+		</div>
 	</div>
 	
 	<div id='linkgrid' style="overflow: auto; height:100%; width: 100px; float:left;border-left:3px solid blue;border-right:3px solid blue;">
@@ -87,14 +91,19 @@ rightgridData = new PHPSlickGrid.JSON.GapDataCacheTable(dataRightOptions,Data);
 
 <script>
 var total_width = $( window ).width();
-var center_width = 100
+var center_width = 100;
 var left_width=((total_width-100)/2);
 var right_width=((total_width-100)/2)-(total_width-(center_width+left_width+((total_width-100)/2)))-3-3;
 //console.log(width);
-$("#leftgrid").width(left_width);
+$("#leftgrid2").width(left_width);
 $("#rightgrid").width(right_width);
-
 $('div.slick-viewport:last').css({"overflow-y" : 'auto !important'});
+
+var leftheight = $("#test22").height();
+$("#test22").height(leftheight-40);
+leftgrid.resizeCanvas();
+//$("#leftgrid").height(leftheight-20);
+
 
 
 
