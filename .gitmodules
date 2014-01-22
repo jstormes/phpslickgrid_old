@@ -10,3 +10,6 @@
 [submodule "public/multiselect"]
 	path = public/multiselect
 	url = https://github.com/davidstutz/bootstrap-multiselect.git
+[submodule "public/font-awesome"]
+	path = public/font-awesome
+	url = git@github.com:FortAwesome/Font-Awesome.git

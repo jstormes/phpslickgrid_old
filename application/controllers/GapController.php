@@ -140,12 +140,17 @@ class GapController extends Zend_Controller_Action
     	/*************** End Setup Left grid ******************/
     	
     	
-     	$ImportFile = new ExcelMgr_View_ImportExcel("TestUpload", $this->GridConfiguration->DataModel, $this->project_id,
- 			array("HTML"=>"<i class='icon-upload icon-large'></i>",
-     		"Help"=>"Select Excel file to upload."
-     		));
-     	$this->view->load_left=$ImportFile->Button();
+      	$ImportFileLeft = new ExcelMgr_View_ImportExcel("LeftUpload", $this->GridConfigurationLeft->DataModel, $this->project_id,
+  			array("HTML"=>"<i style='font-size: 12pt;' class='fa fa-upload'></i>",
+      		"Help"=>"Select Excel file to upload."
+      		));
+      	$this->view->load_left=$ImportFileLeft->Button();
 
+     	$ImportFileRight = new ExcelMgr_View_ImportExcel("RightUpload", $this->GridConfigurationRight->DataModel, $this->project_id,
+     			array("HTML"=>"<i style='font-size: 12pt;' class='fa fa-upload'></i>",
+     					"Help"=>"Select Excel file to upload."
+     			));
+     	$this->view->load_right=$ImportFileRight->Button();
     	
     }
     

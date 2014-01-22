@@ -409,7 +409,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
  		$this->view->user = $this->user;
  		
  		// http://fortawesome.github.io/Font-Awesome/
- 		$this->view->headLink()->appendStylesheet('/font-awesome/css/font-awesome.css','screen, print'); 
+ 		$this->view->headLink()->appendStylesheet('/font-awesome/css/font-awesome.css'); 
 	
  		
  		 		
