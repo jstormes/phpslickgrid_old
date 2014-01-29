@@ -32,6 +32,8 @@ class GapController extends Zend_Controller_Action
         $this->GridConfiguration->DataModel 	= new Application_Model_Grids_GridLink();
         $this->GridConfiguration->project_id	= $this->project_id;
         $this->GridConfiguration->table_name	= 'grid_link';
+        $this->GridConfiguration->editable             = true;
+        $this->GridConfiguration->enableAddRow         = true;
         //$this->GridConfiguration->join = array();
         $this->GridConfiguration->JoinTo( new Application_Model_Grids_GridLeft() );
         $this->GridConfiguration->JoinTo( new Application_Model_Grids_GridRight() );

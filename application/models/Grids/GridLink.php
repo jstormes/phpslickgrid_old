@@ -1,6 +1,6 @@
 <?php
 
-class Application_Model_Grids_GridLink extends PHPSlickGrid_Db_Table
+class Application_Model_Grids_GridLink extends Zend_Db_Table_Abstract
 {
 
     protected $_name = 'grid_link';

@@ -334,7 +334,7 @@ class PHPSlickgrid_View_Helper_PHPSlickgridGap extends Zend_View_Helper_Abstract
         $HTML .= "// ****************************************************************\n";
         $HTML .= $this->name.".onCellChange.subscribe(function(e, args) {\n";
         //$HTML .= "console.log(args.item);\n";
-        $HTML .= "  GapData.updateItem(args.item); // Send updated row to server\n";
+        $HTML .= "  ".$this->name."Data.updateItem(args.item); // Send updated row to server\n";
         $HTML .= "});\n";
         
         $HTML .= "\n\n";
@@ -343,8 +343,8 @@ class PHPSlickgrid_View_Helper_PHPSlickgridGap extends Zend_View_Helper_Abstract
         $HTML .= "// ****************************************************************\n";
         $HTML .= $this->name.".onAddNewRow.subscribe(function(e, args) {\n";
         //$HTML .= "console.log(args.item);\n";
-        $HTML .= "  GapData.addItem(args.item); // Send updated row to server\n";
-        $HTML .= "  GapData.invalidate();\n";
+        $HTML .= "  ".$this->name."Data.addItem(args.item); // Send updated row to server\n";
+        $HTML .= "  Data.invalidate();\n";
        // $HTML .= "  ".$this->name.".invalidate();\n";
        // $HTML .= "  ".$this->name.".render();\n";
         $HTML .= "});\n";

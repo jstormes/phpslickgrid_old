@@ -35,20 +35,20 @@
 		self.newestRecord = '0';
 
 		// Service to call on the server side
-		self.service = new jQuery.Zend.jsonrpc(
-				{
-					url : self.options['jsonrpc'],
-					async : true,
-					// 'error': function(data) {alert(data);inFlight=0;}, //
-					// Connection error
-					'error' : function(data) {
-						//alert('The connection to the server has timed out.  Click OK to try again.');
-						//inFlight = 0;
-					}, // Connection error
-					'exceptionHandler' : function(data) {
-						alert(data);
-					}
-				}); // thrown exception.
+		self.service = new jQuery.Zend.jsonrpc({
+			url : self.options['jsonrpc'],
+			async : true,
+			// 'error': function(data) {alert(data);inFlight=0;}, //
+			// Connection error
+			'error' : function(data) {
+				// alert('The connection to the server has timed out. Click OK
+				// to try again.');
+				// inFlight = 0;
+			}, // Connection error
+			'exceptionHandler' : function(data) {
+				alert(data);
+			}
+		}); // thrown exception.
 
 		// Total number of rows in our dataset
 		self.datalength = null;
@@ -57,7 +57,7 @@
 		// function getLength
 		function getLength() {
 
-			//console.log("getLength()");
+			// console.log("getLength()");
 			var now = new Date();
 
 			// If it has been more than 1000ms (1 second)
@@ -140,27 +140,36 @@
 			// return whatever we have.
 			return self.pages[block].data[idx];
 		}
-		
+
+		function updateItem(item) {
+			self.service.updateItem(self.newestRecord, item, self.options);
+		}
+
+		function addItem(item) {
+			self.service.addItem(item, self.options);
+		}
+
 		function invalidate() {
-	    	  self.datalength = null;
-	    	  self.pages = [];
-	    	  self.reverseLookup = [];
-	    	  //self.activeBuffers = [];
-	    	  //self.newestRecord='0';
-	      }
-		
-		
+			self.datalength = null;
+			self.pages = [];
+			self.reverseLookup = [];
+			// self.activeBuffers = [];
+			// self.newestRecord='0';
+		}
+
 		function setSort(sortarray) {
-			  self.options.order_list = sortarray;
-	      }
+			self.options.order_list = sortarray;
+		}
 
 		return {
 
 			// data provider methods
 			"getLength" : getLength,
 			"getItem" : getItem,
+			"addItem": addItem,
+			"updateItem": updateItem,
 			"onRowCountChanged" : onRowCountChanged,
-			"onRowsChanged" : onRowsChanged	,
+			"onRowsChanged" : onRowsChanged,
 			"setSort" : setSort,
 			"invalidate" : invalidate
 

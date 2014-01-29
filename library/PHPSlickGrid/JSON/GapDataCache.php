@@ -149,4 +149,75 @@ class PHPSlickGrid_JSON_GapDataCache extends PHPSlickGrid_JSON_Abstract {
 
 	}
 	
+	/**
+	 * update an existing row
+	 *
+	 * @param  array $row
+	 * @param  array $options
+	 * @return null
+	 */
+	public function updateItem($updt_dtm, $row, $options=null) {
+		//sleep(5); // Simulate a slow reply
+		try {
+			//throw new Exception(print_r($this->PrimaryKey,true));
+			$parameters=array_merge_recursive($options,$this->parameters);
+	
+			$Row=$this->Table->find($row[$this->PrimaryKey])->current();
+			foreach($row as $Key=>$Value) {
+				if (isset($Row[$Key])) {
+					if ($Value=='null') $Value=null;
+					$Row[$Key]=$Value;
+				}
+			}
+			$Row[$this->UpdatedColumn]=null;
+			$Row->save();
+	
+			return $this->getUpdated($updt_dtm,$options);
+		}
+		catch (Exception $ex) {
+			throw new Exception(print_r($ex,true), 32001);
+		}
+	
+	}
+	
+	/**
+	 * add a new row
+	 *
+	 * @param  array $row
+	 * @param  array $options
+	 * @return null
+	 */
+	public function addItem($row,$options=null) {
+		try {
+			//throw new Exception(print_r($this->PrimaryKey,true));
+			//             $parameters=array_merge($options,$this->parameters);
+	
+			//             $this->log->debug($this->parameters);
+	
+			$NewRow=$this->Table->createRow();
+	
+			foreach($this->Config->staticFields as $field) {
+				$NewRow[$field['field']]=$field['value'];
+				$this->log->debug($field);
+			}
+	
+			foreach($row as $Key=>$Value) {
+				if (isset($NewRow[$Key])) {
+					if ($Value=='null') $Value=null;
+					$NewRow[$Key]=$Value;
+				}
+			}
+	
+	
+			$NewRow[$this->UpdatedColumn]=null;
+			$NewRow->save();
+	
+			return null;
+		}
+		catch (Exception $ex) {
+			throw new Exception(print_r($ex,true), 32001);
+		}
+	
+	}
+	
 }
